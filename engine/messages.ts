@@ -4,7 +4,7 @@ import {
     awardEarnedMessage,
     firstIncrementEarnedMessage,
     incrementEarnedMessage,
-    oneIncrementRemainingMessage
+    oneIncrementRemainingMessage,
 } from '../defaults/awardSuggestions';
 
 export const commentOnIssue = async (standardEvent, awardWon, context) => {
@@ -15,10 +15,10 @@ export const commentOnIssue = async (standardEvent, awardWon, context) => {
             content: [
                 {
                     type: 'paragraph',
-                    content: createCommentContent(standardEvent, awardWon)
-                }
-            ]
-        }
+                    content: createCommentContent(standardEvent, awardWon),
+                },
+            ],
+        },
     };
 
     //console.debug(`Commenting on issue ${standardEvent.event.issue.key}:`, JSON.stringify(comment, null, 2));
@@ -27,9 +27,9 @@ export const commentOnIssue = async (standardEvent, awardWon, context) => {
         method: 'POST',
         headers: {
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify(comment)
+        body: JSON.stringify(comment),
     });
 
     if (response.status !== 201) {
@@ -41,7 +41,7 @@ export const commentOnConfluenceContent = async (standardEvent, awardWon, contex
     const comment = {
         type: 'comment',
         space: {
-            id: standardEvent.event.content.space.id
+            id: standardEvent.event.content.space.id,
         },
         body: {
             atlas_doc_format: {
@@ -52,18 +52,18 @@ export const commentOnConfluenceContent = async (standardEvent, awardWon, contex
                     content: [
                         {
                             type: 'paragraph',
-                            content: createCommentContent(standardEvent, awardWon)
-                        }
-                    ]
-                })
-            }
+                            content: createCommentContent(standardEvent, awardWon),
+                        },
+                    ],
+                }),
+            },
         },
         title: 'Scavenger Hunt Award',
         container: {
             id: standardEvent.event.content.id,
             type: 'global',
-            status: 'current'
-        }
+            status: 'current',
+        },
     };
 
     console.debug(`Commenting on content ${standardEvent.event.content.id}:`, JSON.stringify(comment, null, 2));
@@ -72,9 +72,9 @@ export const commentOnConfluenceContent = async (standardEvent, awardWon, contex
         method: 'POST',
         headers: {
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify(comment)
+        body: JSON.stringify(comment),
     });
 
     if (response.status !== 200) {
@@ -136,8 +136,8 @@ const userMentionBlock = (accountId) => {
     return {
         type: 'mention',
         attrs: {
-            id: accountId
-        }
+            id: accountId,
+        },
     };
 };
 
@@ -145,36 +145,38 @@ const awardIconBlock = (awardIcon) => {
     return {
         type: 'emoji',
         attrs: {
-            shortName: awardIcon
-        }
+            shortName: awardIcon,
+        },
     };
 };
 
 const textBlock = (text) => {
     return {
         type: 'text',
-        text: text
+        text: text,
     };
 };
 
 export const generateVariables = (standardEvent, awardWon) => {
     console.debug('user award balance', standardEvent.userRecord.awardBalance);
-    const currentBalance = standardEvent.userRecord?.awardBalance?.find((award) => award.id === awardWon.id).balance ?? 0;
+    const currentBalance : number =
+        standardEvent.userRecord?.awardBalance?.find((award) => award.id === awardWon.id).balance ?? 0;
 
-    let variables = {};
-    variables.currentBalance = currentBalance;
-    variables.firstIncrement = currentBalance === 1;
-    variables.oneIncrementRemaining = currentBalance === awardWon.quantityRequired - 1;
-    variables.awardWon = currentBalance === awardWon.quantityRequired;
-    variables.userMention = '|§|userMention|§|';
-    variables.actionPerformed = standardEvent.eventDisplayName;
-    variables.incrementName = awardWon.incrementName;
-    variables.increment = awardWon.incrementName;
-    variables.quantityRequired = awardWon.quantityRequired;
-    variables.quantityRemaining = awardWon.quantityRequired - currentBalance;
-    variables.awardName = awardWon.name;
-    variables.awardDescription = awardWon.description;
-    variables.awardIcon = '|§|awardIcon|§|';
+    let variables = {
+        currentBalance: currentBalance,
+        firstIncrement: currentBalance === 1,
+        oneIncrementRemaining: currentBalance === awardWon.quantityRequired - 1,
+        awardWon: currentBalance === awardWon.quantityRequired,
+        userMention: '|§|userMention|§|',
+        actionPerformed: standardEvent.eventDisplayName,
+        incrementName: awardWon.incrementName,
+        increment: awardWon.incrementName,
+        quantityRequired: awardWon.quantityRequired,
+        quantityRemaining: awardWon.quantityRequired - currentBalance,
+        awardName: awardWon.name,
+        awardDescription: awardWon.description,
+        awardIcon: '|§|awardIcon|§|',
+    };
 
     console.debug('variables:', variables);
     return variables;

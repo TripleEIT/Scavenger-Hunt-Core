@@ -1,10 +1,39 @@
 import api, { route } from '@forge/api';
 import { defaultUserRecord } from '../defaults/userRecord';
-import { getActivePowerUp } from '../utils';
+import { getActivePowerUp, StandardContext } from '../utils';
 import { setConfigurationSettings } from './configurationData';
 import { deleteDistributedData, getDistributedData, setDistributedData } from './distributedStorage';
 
 const userPrefix = 'userRecord';
+export interface PowerUpStatus {
+    type: string;
+    quantity: number;
+}
+
+export interface AwardActivity {
+    awardId: string;
+    awardName: string;
+    incrementName: string;
+    incrementsWon: number;
+    activePowerUp?: string;
+    awardActivity: string;
+    date: string;
+}
+
+export interface BalanceActivity {
+    id: string;
+    balance: number;
+}
+
+export interface User {
+    accountId: string;
+    awardActivity: AwardActivity[];
+    powerUpActivity: string[];
+    awardBalance: BalanceActivity[];
+    powerUpBalance: PowerUpStatus[];
+    activePowerUp: string;
+    activePowerUpExpiration: number; // timestamp
+}
 
 export const getJiraUserProperty = async (propertyName) => {
     try {
@@ -129,23 +158,23 @@ export const getJiraAppUser = async () => {
 
 export const isUserRegistered = async (accountId, autoRegister) => {};
 
-export const getUserRecord = async (accountId, context) => {
+export const getUserRecord = async (accountId, context: StandardContext) => {
     try {
         const userRecord = await getDistributedData(`${userPrefix}.${accountId}`, context.product);
         if (userRecord === null) {
             let newUserRecord = {...defaultUserRecord, accountId: accountId};
             console.debug('Creating new user record for', accountId, newUserRecord);
             await setUserRecord(accountId, newUserRecord, context);
-            return newUserRecord;
+            return newUserRecord as User;
         } else {
-            return userRecord;
+            return userRecord as User;
         }
     } catch (error) {
         console.error(`Error getting user record for ${accountId}:`, error);
     }
 };
 
-export const setUserRecord = async (accountId, userRecord, context) => {
+export const setUserRecord = async (accountId, userRecord: User, context: StandardContext) => {
     try {
         await setDistributedData(`${userPrefix}.${accountId}`, userRecord, context.product);
     } catch (error) {
@@ -153,7 +182,7 @@ export const setUserRecord = async (accountId, userRecord, context) => {
     }
 };
 
-export const deleteUserRecord = async (accountId, context) => {
+export const deleteUserRecord = async (accountId, context: StandardContext) => {
     try {
         await deleteDistributedData(`${userPrefix}.${accountId}`, context.product);
     } catch (error) {

@@ -1,8 +1,8 @@
 import ForgeUI, { Text, render, GlobalPage, Fragment, Tabs, useProductContext, Tab, Heading, Strong } from '@forge/ui';
-import { HelpAndWelcome } from './ui/leaderboard/HelpAndWelcome.js';
-import { LeaderboardTable } from './ui/leaderboard/LeaderboardTable.js';
-import { MyProfile } from './ui/leaderboard/MyProfile.js';
-import { getStandardContext } from './utils.js';
+import { HelpAndWelcome } from './ui/leaderboard/HelpAndWelcome';
+import { LeaderboardTable } from './ui/leaderboard/LeaderboardTable';
+import { MyProfile } from './ui/leaderboard/MyProfile';
+import { getStandardContext } from './utils';
 
 const UserHomePage = () => {
     const context = getStandardContext(useProductContext(), 'user');

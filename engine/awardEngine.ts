@@ -1,7 +1,7 @@
-import { getActiveProductAwards, recordAwardedIncrementWon } from '../storage/awardData.js';
-import { awardUserAwardIncrement } from '../storage/userData.js';
-import { determineAward } from './awardProbability.js';
-import { commentOnIssue, commentOnConfluenceContent } from './messages.js';
+import { getActiveProductAwards, recordAwardedIncrementWon } from '../storage/awardData';
+import { awardUserAwardIncrement } from '../storage/userData';
+import { determineAward } from './awardProbability';
+import { commentOnIssue, commentOnConfluenceContent } from './messages';
 
 export const grantUserJiraAward = async (standardEvent, configuration) => {
     const context = standardEvent.context;

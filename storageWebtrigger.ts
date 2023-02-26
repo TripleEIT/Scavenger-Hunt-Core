@@ -1,7 +1,8 @@
 // This file holds the endpoints to help allow a consistent storage across products
 
-import { getKnownEndpoints } from './storage/endpointManager.js';
+import { getKnownEndpoints } from './storage/endpointManager';
 import { storage } from '@forge/api';
+import { getStandardContext, StandardContext } from './utils';
 
 // this simple key is used to put a basic tamper seal on the storage calls
 // it must be used whenever calling the webhooks
@@ -27,7 +28,7 @@ export const storeReceivedData = async (request, context) => {
     }
 };
 
-export const fetchStoredData = async (request, context) => {
+export const fetchStoredData = async (request, context: StandardContext) => {
     const endpointRequest = getEndpointRequest(request, context, 'fetchStoredData');
     if (!endpointRequest) {
         return null;
@@ -52,7 +53,7 @@ export const fetchStoredData = async (request, context) => {
     }
 };
 
-export const deleteStoredData = async (request, context) => {
+export const deleteStoredData = async (request, context: StandardContext) => {
     const endpointRequest = getEndpointRequest(request, context, 'deleteStoredData');
     if (!endpointRequest) {
         return null;
@@ -74,7 +75,8 @@ export const deleteStoredData = async (request, context) => {
 };
 
 export const fetchKnownEndpoints = async (request, context) => {
-    const endpointRequest = getEndpointRequest(request, context, 'fetchKnownEndpoints');
+    const standardContext = getStandardContext(context, 'webhook');
+    const endpointRequest = getEndpointRequest(request, standardContext, 'fetchKnownEndpoints');
     if (!endpointRequest) {
         return null;
     }
@@ -94,7 +96,7 @@ const buildResponse = (body, statusCode = 200) => {
     };
 };
 
-const getEndpointRequest = (request, context, name) => {
+const getEndpointRequest = (request, context: StandardContext, name) => {
     // Bail if things don't look right
     if (!isValidRequest(request)) {
         console.error(`Invalid ${name} request, look at the logs for more details`);
@@ -102,14 +104,14 @@ const getEndpointRequest = (request, context, name) => {
     }
 
     const body = getRequestBody(request);
-    const product = getRequestingProduct(context);
+    const product = context.product;
     if (!body || !product) {
         console.error(`Invalid request body or product, ${name} failed`);
         return null;
     }
 
     const endpointRequest = {
-        product: product,
+        product: product as 'jira' | 'confluence',
         body: body
     };
 
@@ -124,7 +126,7 @@ const isValidRequest = (request) => {
         return false;
     } else if (
         Array.isArray(request.headers['content-type'][0]) &&
-        request.headers['content-type'][0] !== 'application/json'
+        request.headers['content-type'][0].toString() !== 'application/json'
     ) {
         console.error('Invalid content type:', request.headers['content-type']);
         return false;
@@ -141,18 +143,6 @@ const getRequestBody = (request) => {
         return JSON.parse(request.body);
     } catch (error) {
         console.error('Error parsing request body:', error);
-        return null;
-    }
-};
-
-const getRequestingProduct = (context) => {
-    const installContext = context.installContext;
-    if (installContext?.toString().indexOf('jira') > -1) {
-        return 'jira';
-    } else if (installContext?.toString().indexOf('confluence') > -1) {
-        return 'confluence';
-    } else {
-        console.error('Unknown product:', installContext);
         return null;
     }
 };

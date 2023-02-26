@@ -1,4 +1,5 @@
-import { generateRandomString } from '../utils.js';
+import { AwardEntry } from 'src/storage/awardData';
+import { generateRandomString } from '../utils';
 
 export const hasDefaultAwardSuggestion = (awardId) => {
     // Check if we have any default award suggestions
@@ -23,32 +24,31 @@ export const getNewGenericAward = () => {
         quantityRequired: 10,
         outstandingAwards: 0,
         enabled: false
-    };
+    } as AwardEntry;
 };
 
-export const blankAward = {
+export const blankAward : AwardEntry = {
     id: '',
     name: '',
     description: '',
     incrementName: '',
-    incrementSingular: '',
     quantityRequired: 0,
     outstandingAwards: 0,
     enabled: false
 };
 
-export const firstIncrementEarnedMessage =
+export const firstIncrementEarnedMessage : string =
     '{{userMention}} earned their first {{awardIcon}} towards a {{awardName}}!  Only {{quantityRemaining}} more {{incrementName}} to go!  \r\nCheck the app page to see your progress.';
-export const incrementEarnedMessage =
+export const incrementEarnedMessage : string =
     '{{userMention}} earned one more {{incrementName}} towards a {{awardName}}, keep up the good work.';
-export const oneIncrementRemainingMessage =
+export const oneIncrementRemainingMessage : string =
     'There is only one {{increment}} remaining until {{userMention}} earns a {{awardName}}!  \r\nKeep an eye on the leaderboard to see how things are progressing.';
-export const awardEarnedMessage =
+export const awardEarnedMessage : string =
     '{{awardIcon}}{{awardIcon}}Congratulations {{userMention}}, you earned a {{awardName}}!{{awardIcon}}{{awardIcon}} \r\nYou can redeem your award from the Scavenger Hunt tab.';
 
-export const awardRedeemedMessage = 'Congratulations on collecting all of the increments needed, enjoy your reward!';
+export const awardRedeemedMessage : string = 'Congratulations on collecting all of the increments needed, enjoy your reward!';
 
-export const defaultAwardSuggestions = [
+export const defaultAwardSuggestions : AwardEntry[] = [
     {
         id: 'award-three',
         name: 'Breakfast Treats',

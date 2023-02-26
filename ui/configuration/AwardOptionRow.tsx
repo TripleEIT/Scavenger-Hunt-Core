@@ -1,6 +1,6 @@
 import ForgeUI, { Text, ButtonSet, useState, Button, Row, Cell, useEffect, Fragment } from '@forge/ui';
-import { EditAwardModal } from './EditAwardModal.js';
-import { getAwardOption, getNarrowAward, replaceUndefinedValues, saveAwardOption } from '../../storage/awardData.js';
+import { EditAwardModal } from './EditAwardModal';
+import { AwardEntry, getAwardOption, getNarrowAward, replaceUndefinedAwardValues, saveAwardOption } from '../../storage/awardData';
 
 export const AwardOptionRow = (props) => {
     const { award, context, currentConfig, setCurrentConfig, deployingState } = props;
@@ -26,7 +26,7 @@ export const AwardOptionRow = (props) => {
     };
 
     const performSave = async (formData) => {
-        const newAwardOptionState = replaceUndefinedValues(formData, awardOptionState);
+        const newAwardOptionState : AwardEntry = replaceUndefinedAwardValues(formData, awardOptionState);
         console.debug('Saving award option', newAwardOptionState);
         setAwardOptionState(newAwardOptionState);
         await saveAwardOption(awardId, newAwardOptionState, context);

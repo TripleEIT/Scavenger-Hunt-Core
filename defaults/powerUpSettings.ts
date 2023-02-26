@@ -1,5 +1,12 @@
+export interface PowerUpDefinition {
+    name: string;
+    description: string;
+    durationSeconds: number;
+    duration: string;
+}
+
 export const getPowerUpDefinition = (type) => {
-    return powerUpDefinitions[type];
+    return powerUpDefinitions[type] as PowerUpDefinition;
 };
 
 const powerUpDefinitions = {

@@ -17,11 +17,17 @@ import ForgeUI, {
     Tag,
     TagGroup,
     useEffect,
-    useState
+    useState,
 } from '@forge/ui';
 import { format } from 'date-fns';
 import { blankAward } from '../../defaults/awardSuggestions';
-import { getAwardOption, getNarrowAward, saveAwardOption } from '../../storage/awardData';
+import {
+    AwardEntry,
+    AwardHistoryRecord,
+    getAwardOption,
+    getNarrowAward,
+    saveAwardOption,
+} from '../../storage/awardData';
 
 export const ManageAwardsModal = (props) => {
     const { awardActions, currentConfig, setCurrentConfig, context, deployingState } = props;
@@ -42,10 +48,10 @@ export const ManageAwardsModal = (props) => {
             balance: formData.quantityToDeploy,
             expirationDate: formData.expirationDate,
             locations: formData.availabilityLocations,
-            date: new Date().toISOString()
-        };
+            date: new Date().toISOString(),
+        } as AwardHistoryRecord;
 
-        const updatedAward = {...awardOptionState};
+        const updatedAward: AwardEntry = { ...awardOptionState };
 
         updatedAward.validUntil = formData.expirationDate;
         updatedAward.outstandingAwards = formData.quantityToDeploy;
@@ -63,7 +69,7 @@ export const ManageAwardsModal = (props) => {
         deployingState.award = newAwardNarrowEntry;
         setCurrentConfig({
             ...currentConfig,
-            awards: [...currentConfig.awards.filter((a) => a.id !== awardOptionState.id), newAwardNarrowEntry]
+            awards: [...currentConfig.awards.filter((a) => a.id !== awardOptionState.id), newAwardNarrowEntry],
         });
     };
 
@@ -71,40 +77,42 @@ export const ManageAwardsModal = (props) => {
         <Fragment>
             {deployingState.deploying && (
                 <ModalDialog
-                    header='Award Management'
+                    header="Award Management"
                     onClose={() => awardActions.setDeployingState({ deploying: false, awardId: null })}
-                    closeButtonText='Close'
-                    width='x-large'
+                    closeButtonText="Close"
+                    width="x-large"
                 >
                     <Tabs>
-                        <Tab label='Deploy Awards'>
-                            <Form onSubmit={deployAwardIncrements} submitButtonText='Update Award Availability'>
+                        <Tab label="Deploy Awards">
+                            <Form onSubmit={deployAwardIncrements} submitButtonText="Update Award Availability">
                                 <Text>{`Lets deploy some ${awardOptionState.incrementName} for the Scavengers to find.`}</Text>
                                 <TextField
-                                    name='quantityToDeploy'
+                                    name="quantityToDeploy"
                                     description={`How many ${awardOptionState.incrementName} do you want to deploy?  A user will need to find ${awardOptionState.quantityRequired} of these to earn the ${awardOptionState.name} award.`}
-                                    label='Quantity to Deploy'
-                                    defaultValue={awardOptionState.quantityRequired * 3}
+                                    label="Quantity to Deploy"
+                                    defaultValue={(awardOptionState.quantityRequired * 3).toString()}
                                 />
-                                <Text></Text>
+                                <Text> </Text>
                                 <CheckboxGroup
-                                    name='availabilityLocations'
-                                    label='Availability Locations'
+                                    name="availabilityLocations"
+                                    label="Availability Locations"
                                     description={`The ${awardOptionState.incrementName} will be available on the products selected. To customize which Activities and Creations are
                             are eligible for a user to earn a award increment on, use the Jira and Confluence settings tabs. \n`}
                                 >
-                                    <Checkbox label='Jira' defaultChecked={true} value='jira' />
-                                    <Checkbox label='Confluence' defaultChecked={true} value='confluence' />
+                                    <Checkbox label="Jira" defaultChecked={true} value="jira" />
+                                    <Checkbox label="Confluence" defaultChecked={true} value="confluence" />
                                 </CheckboxGroup>
                                 <DatePicker
-                                    label='Expiration Date'
-                                    name='expirationDate'
-                                    defaultValue={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
-                                    description='How long are these awards valid for?  Set a short date for a Bug Bash and they will be available for a limited time only.'
+                                    label="Expiration Date"
+                                    name="expirationDate"
+                                    defaultValue={new Date(
+                                        new Date().setFullYear(new Date().getFullYear() + 1)
+                                    ).toString()}
+                                    description="How long are these awards valid for?  Set a short date for a Bug Bash and they will be available for a limited time only."
                                 />
                             </Form>
                         </Tab>
-                        <Tab label='Deployment History'>
+                        <Tab label="Deployment History">
                             <Table>
                                 <Head>
                                     <Cell>
@@ -127,7 +135,9 @@ export const ManageAwardsModal = (props) => {
                                     </Cell>
                                 </Head>
                                 {awardOptionState.awardHistory?.map((historyRecord) => {
-                                    const actionMessage =`${historyRecord.action.charAt(0).toUpperCase() + historyRecord.action.slice(1)} ${Math.abs(historyRecord.difference)} increments`
+                                    const actionMessage = `${
+                                        historyRecord.action.charAt(0).toUpperCase() + historyRecord.action.slice(1)
+                                    } ${Math.abs(historyRecord.difference)} increments`;
                                     return (
                                         <Row>
                                             <Cell>
@@ -144,15 +154,21 @@ export const ManageAwardsModal = (props) => {
                                                     {historyRecord.locations?.map((location) => {
                                                         return (
                                                             <Tag
-                                                                text={location.charAt(0).toUpperCase() + location.slice(1)}
-                                                                color='blue-light'
+                                                                text={
+                                                                    location.charAt(0).toUpperCase() + location.slice(1)
+                                                                }
+                                                                color="blue-light"
                                                             />
                                                         );
                                                     })}
                                                 </TagGroup>
                                             </Cell>
                                             <Cell>
-                                                <Text>{historyRecord.expirationDate ? format(new Date(historyRecord.expirationDate), 'dd-MMM-yy') : 'none'}</Text>
+                                                <Text>
+                                                    {historyRecord.expirationDate
+                                                        ? format(new Date(historyRecord.expirationDate), 'dd-MMM-yy')
+                                                        : 'none'}
+                                                </Text>
                                             </Cell>
                                             <Cell>
                                                 <Text>{historyRecord.balance}</Text>

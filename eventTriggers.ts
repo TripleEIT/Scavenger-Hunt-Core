@@ -4,6 +4,34 @@ import { getConfigurationSettings } from './storage/configurationData';
 import { getStandardContext, getStandardEvent } from './utils';
 import { getConfluenceAppUser, getJiraAppUser } from './storage/userData';
 
+export interface JiraEvent {
+    eventType: string;
+    accountId: string;
+    eventName: string;
+    eventDisplayName: string;
+    issue: {
+        id: string;
+        key: string;
+        summary: string;
+    };
+}
+
+export interface ConfluenceEvent {
+    eventType: string;
+    accountId: string;
+    eventName: string;
+    eventDisplayName: string;
+    content: {
+        id: string;
+        title: string;
+        type: string;
+        space: {
+            id: string;
+            key: string;
+        };
+    };
+}
+
 export async function processJiraEvent(event, context) {
     const standardContext = getStandardContext(context, 'event');
     if (standardContext.isLicensed === false) {
@@ -14,7 +42,7 @@ export async function processJiraEvent(event, context) {
     const jiraEvent = getJiraEvent(event);
     console.debug('Jira app user:', jiraAppUser);
     console.debug('Jira event:', jiraEvent);
-    if(jiraAppUser.accountId === jiraEvent.accountId) {
+    if (jiraAppUser.accountId === jiraEvent.accountId) {
         console.debug('Ignoring event triggered by app user');
         return;
     }
@@ -22,7 +50,7 @@ export async function processJiraEvent(event, context) {
     const configurationSettings = await getConfigurationSettings(context);
     const standardEvent = await getStandardEvent(jiraEvent, standardContext, 'eventTrigger');
     const receivesAward = doesEventTriggerAward(standardEvent, configurationSettings);
-    if(receivesAward) {
+    if (receivesAward) {
         await grantUserJiraAward(standardEvent, configurationSettings);
     }
 }
@@ -32,35 +60,35 @@ export async function processConfluenceEvent(event, context) {
     if (standardContext.isLicensed === false) {
         console.error('License is not active. Ignoring event.', context);
     }
-    
+
     const confluenceAppUser = await getConfluenceAppUser();
     const confluenceEvent = getConfluenceEvent(event);
 
-    if(confluenceAppUser.accountId === confluenceEvent.accountId) {
+    if (confluenceAppUser.accountId === confluenceEvent.accountId) {
         console.debug('Ignoring event triggered by app user');
         return;
     }
 
-    
-    
     const configurationSettings = await getConfigurationSettings(context);
     const standardEvent = await getStandardEvent(confluenceEvent, standardContext, 'eventTrigger');
     const receivesAward = doesEventTriggerAward(standardEvent, configurationSettings);
 
     if (receivesAward) {
         await grantUserConfluenceAward(standardEvent, configurationSettings);
-    } 
+    }
 }
 
 const getJiraEvent = (event) => {
     let jiraEvent = {
-        eventType: event.eventType,
-        accountId: event.atlassianId,
+        eventType: event.eventType as string,
+        accountId: event.atlassianId as string,
+        eventName: '',
+        eventDisplayName: '',
         issue: {
-            id: event.issue.id,
-            key: event.issue.key,
-            summary: event.issue.fields.summary
-        }
+            id: event.issue.id as string,
+            key: event.issue.key as string,
+            summary: event.issue.fields.summary as string,
+        },
     };
 
     switch (event.eventType) {
@@ -84,22 +112,24 @@ const getJiraEvent = (event) => {
             console.error('Unknown event type received (Jira): ', event.eventType);
     }
 
-    return jiraEvent;
+    return jiraEvent as JiraEvent;
 };
 
 const getConfluenceEvent = (event) => {
     let confluenceEvent = {
-        eventType: event.eventType,
-        accountId: event.atlassianId,
+        eventType: event.eventType as string,
+        accountId: event.atlassianId as string,
+        eventName: '',
+        eventDisplayName: '',
         content: {
-            type: event.content.type,
-            id: event.content.id,
-            title: event.content.title,
+            type: event.content.type as string,
+            id: event.content.id as string,
+            title: event.content.title as string,
             space: {
-                id: event.content.space.id,
-                key: event.content.space.key
-            }
-        }
+                id: event.content.space.id as string,
+                key: event.content.space.key as string,
+            },
+        },
     };
 
     switch (event.eventType) {
@@ -136,8 +166,8 @@ const getConfluenceEvent = (event) => {
                 title: event.content.container.title,
                 space: {
                     id: event.content.space.id,
-                    key: event.content.space.key
-                }
+                    key: event.content.space.key,
+                },
             };
             break;
         case 'avi:confluence:viewed:page':
@@ -148,5 +178,5 @@ const getConfluenceEvent = (event) => {
             console.error('Unknown event type received (Confluence): ', event.eventType);
     }
 
-    return confluenceEvent;
+    return confluenceEvent as ConfluenceEvent;
 };

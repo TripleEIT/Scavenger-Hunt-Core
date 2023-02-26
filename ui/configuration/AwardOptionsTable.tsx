@@ -1,9 +1,9 @@
 import ForgeUI, { Fragment, Text, Button, Table, Head, Cell, Heading, useState, useEffect } from '@forge/ui';
-import { getNewGenericAward } from '../../defaults/awardSuggestions.js';
-import { deleteAwardOption, getAwardOption, getNarrowAward, saveAwardOption } from '../../storage/awardData.js';
-import { generateRandomString } from '../../utils.js';
-import { AwardOptionRow } from './AwardOptionRow.js';
-import { ManageAwardsModal } from './ManageAwardsModal.js';
+import { getNewGenericAward } from '../../defaults/awardSuggestions';
+import { deleteAwardOption, getAwardOption, getNarrowAward, saveAwardOption } from '../../storage/awardData';
+import { generateRandomString } from '../../utils';
+import { AwardOptionRow } from './AwardOptionRow';
+import { ManageAwardsModal } from './ManageAwardsModal';
 
 export const AwardOptionsTable = (props) => {
     const { currentConfig, setCurrentConfig, context } = props;

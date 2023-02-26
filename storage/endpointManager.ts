@@ -1,10 +1,10 @@
 import { webTrigger } from '@forge/api';
-import { getConfluenceUserProperty, getJiraUserProperty, setConfluenceUserProperty, setJiraUserProperty } from './userData.js';
+import { getConfluenceUserProperty, getJiraUserProperty, setConfluenceUserProperty, setJiraUserProperty } from './userData';
 
 const jiraStorageKeyName = 'jiraStorageEndpoints';
 const confluenceStorageKeyName = 'confluenceStorageEndpoints';
 
-export const getKnownEndpoints = async (currentProduct) => {
+export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') => {
     const jiraUserEndpointPromise = getJiraUserProperty(jiraStorageKeyName);
     const confluenceUserEndpointPromise = getConfluenceUserProperty(confluenceStorageKeyName);
 

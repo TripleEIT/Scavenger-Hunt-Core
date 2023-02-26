@@ -1,5 +1,5 @@
 import ForgeUI, { Fragment, Tag, TagGroup, Text } from '@forge/ui';
-import { getActivePowerUp } from '../../utils.js';
+import { getActivePowerUp } from '../../utils';
 
 export const ActivePowerUp = (props) => {
     const { user } = props;

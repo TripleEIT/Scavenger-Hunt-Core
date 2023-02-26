@@ -1,10 +1,10 @@
-import { getNonSelfStorageEndpoint } from './endpointManager.js';
+import { getNonSelfStorageEndpoint } from './endpointManager';
 import { fetch, storage } from '@forge/api';
-import { storageKey } from '../storageWebtrigger.js';
+import { storageKey } from '../storageWebtrigger';
 
 let nonSelfEndpoint;
 
-export const getDistributedData = async (key, currentProduct) => {
+export const getDistributedData = async (key: string, currentProduct: string) => {
     // check locally first, and then check the distributed storage
     const localData = await storage.get(key);
 
@@ -30,9 +30,9 @@ export const getDistributedData = async (key, currentProduct) => {
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey
+            'x-storage-key': storageKey,
         },
-        body: `{ "key" : "${key}" }`
+        body: `{ "key" : "${key}" }`,
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.fetchData, storageRequest);
@@ -47,7 +47,7 @@ export const getDistributedData = async (key, currentProduct) => {
     }
 };
 
-export const setDistributedData = async (key, value, currentProduct) => {
+export const setDistributedData = async (key: string, value: any, currentProduct: string) => {
     // store locally first and get a promise, and then store the distributed storage
     const storagePromise = storage.set(key, value);
 
@@ -63,7 +63,7 @@ export const setDistributedData = async (key, value, currentProduct) => {
 
     const bodyPayload = {
         key: key,
-        value: value
+        value: value,
     };
 
     const storageRequest = {
@@ -71,9 +71,9 @@ export const setDistributedData = async (key, value, currentProduct) => {
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey
+            'x-storage-key': storageKey,
         },
-        body: JSON.stringify(bodyPayload)
+        body: JSON.stringify(bodyPayload),
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.storeData, storageRequest);
@@ -81,7 +81,7 @@ export const setDistributedData = async (key, value, currentProduct) => {
     return await storageResponse.json();
 };
 
-export const deleteDistributedData = async (key, currentProduct) => {
+export const deleteDistributedData = async (key: string, currentProduct: string) => {
     // delete locally first and get a promise, and then delete the distributed storage
     const storagePromise = storage.delete(key);
 
@@ -95,7 +95,7 @@ export const deleteDistributedData = async (key, currentProduct) => {
     }
 
     const bodyPayload = {
-        key: key
+        key: key,
     };
 
     const storageRequest = {
@@ -103,9 +103,9 @@ export const deleteDistributedData = async (key, currentProduct) => {
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey
+            'x-storage-key': storageKey,
         },
-        body: JSON.stringify(bodyPayload)
+        body: JSON.stringify(bodyPayload),
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.deleteData, storageRequest);

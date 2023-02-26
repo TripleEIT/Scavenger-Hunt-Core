@@ -33,7 +33,7 @@ export const RedeemAwardsBlock = (props) => {
 
             const newNarrowUserDetails = getNarrowUserRecord(newUserDetails);
 
-            const redemptionRecord = await recordAwardRedemption(awardData, userDetails, context, currentConfig);
+            const redemptionRecord = await recordAwardRedemption(awardData, userDetails);//, context, currentConfig);
             const newConfig = {
                 ...currentConfig,
                 activeUsers: [
@@ -112,7 +112,7 @@ export const RedeemAwardsBlock = (props) => {
             </Table>
             {isRedeeming.isRedeeming && (
                 <Fragment>
-                    <ModalDialog header='Congratulations' onClose={() => setIsRedeeming(false)} closeButtonText='Close'>
+                    <ModalDialog header='Congratulations' onClose={() => setIsRedeeming({isRedeeming: false, message: null, redemptionCode: null})} closeButtonText='Close'>
                         <Text>{isRedeeming.message}</Text>
                         <Text> </Text>
                         <Heading size='small'>Redemption Code</Heading>

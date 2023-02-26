@@ -1,4 +1,29 @@
-import { getUserRecord } from './storage/userData';
+import { ConfluenceEvent, JiraEvent } from './eventTriggers';
+import { getUserRecord, User } from './storage/userData';
+
+export interface StandardContext {
+    product: 'jira' | 'confluence';
+    accountId: string;
+    atlassianId: string;
+    cloudId: string;
+    localId: string;
+    moduleKey: string;
+    environmentType: any;
+    extensionContext: any;
+    caller: string;
+    isLicensed: boolean;
+}
+
+export interface StandardEvent {
+    eventName: string;
+    eventDisplayName: string;
+    accountId: string;
+    userRecord: User;
+    source: string;
+    product: string;
+    context: StandardContext;
+    event: ConfluenceEvent | JiraEvent;
+}
 
 export const getActivePowerUp = (userRecord) => {
     const activePowerUp = userRecord.activePowerUp;
@@ -43,20 +68,24 @@ export const getStandardContext = (context, caller) => {
         environmentType: context.environmentType,
         extensionContext: context.extensionContext,
         caller: caller,
-        isLicensed: isLicenseActive(context)
-    };
+        isLicensed: isLicenseActive(context),
+    } as StandardContext;
 
     if (context.installContext.indexOf('jira') > -1) {
         standardContext.product = 'jira';
     } else if (context.installContext.indexOf('confluence') > -1) {
         standardContext.product = 'confluence';
-    }    
+    }
 
     return standardContext;
 };
 
 // we'll standardize the events so that we can add a schedule or webhook trigger to the same function later
-export const getStandardEvent = async (sourceEvent, context, sourceName) => {
+export const getStandardEvent = async (
+    sourceEvent: ConfluenceEvent | JiraEvent,
+    context: StandardContext,
+    sourceName
+) => {
     const standardEvent = {
         eventName: sourceEvent.eventName,
         eventDisplayName: sourceEvent.eventDisplayName,
@@ -69,7 +98,7 @@ export const getStandardEvent = async (sourceEvent, context, sourceName) => {
     };
 
     console.debug('Standard event: ', standardEvent);
-    return standardEvent;
+    return standardEvent as StandardEvent;
 };
 
 export const generateRandomString = (myLength) => {

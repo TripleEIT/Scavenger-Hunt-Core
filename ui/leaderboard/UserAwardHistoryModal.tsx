@@ -1,7 +1,7 @@
 import ForgeUI, { Cell, Fragment, Head, ModalDialog, Row, Table, Text, useEffect, useState } from '@forge/ui';
-import { getUserRecord } from '../../storage/userData.js';
+import { getUserRecord } from '../../storage/userData';
 import { format } from 'date-fns';
-import { defaultUserRecord} from '../../defaults/userRecord.js';
+import { defaultUserRecord} from '../../defaults/userRecord';
 
 export const UserAwardHistoryModal = (props) => {
     const { viewingUserState, context, setViewingUserState } = props;

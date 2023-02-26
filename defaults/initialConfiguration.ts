@@ -1,16 +1,17 @@
-import { defaultAwardSuggestions } from "./awardSuggestions";
+import { AwardEntry } from 'src/storage/awardData';
+import { ConfluenceConfiguration, JiraConfiguration } from 'src/storage/configurationData';
+import { defaultAwardSuggestions } from './awardSuggestions';
 
-
-export const defaultJiraConfiguration = {
+export const defaultJiraConfiguration: JiraConfiguration = {
     issueCreated: true,
     issueUpdated: true,
     issueCommented: true,
     issueCreatedProbability: 8,
     issueUpdatedProbability: 5,
-    issueCommentedProbability: 8
-  };
+    issueCommentedProbability: 8,
+};
 
-export const defaultConfluenceConfiguration = {
+export const defaultConfluenceConfiguration : ConfluenceConfiguration = {
     pageCreated: true,
     pageUpdated: true,
     pageLiked: true,
@@ -24,8 +25,8 @@ export const defaultConfluenceConfiguration = {
     blogCreatedProbability: 22,
     blogUpdatedProbability: 10,
     blogLikedProbability: 5,
-    commentCreatedProbability: 12
-  };
+    commentCreatedProbability: 12,
+};
 
 export const defaultSharedConfiguration = {
     awards: defaultAwardSuggestions,
