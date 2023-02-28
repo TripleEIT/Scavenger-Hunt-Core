@@ -9,7 +9,6 @@ import { AdvancedConfiguration } from './ui/configuration/AdvancedConfiguration'
 
 const SharedSettings = () => {
     const context = getStandardContext(useProductContext(), 'user');
-    console.log('context', context);
 
     if (context.isLicensed === false) {
         console.error('License not found', useProductContext());

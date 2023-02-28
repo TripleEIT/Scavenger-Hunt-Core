@@ -90,6 +90,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
         storageKnownEndpoints.jira = await endpointPromise;
     }
 
+    await storage.set(endpointStorageKey, storageKnownEndpoints);
     return storageKnownEndpoints;
 };
 
