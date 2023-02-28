@@ -87,8 +87,8 @@ const getJiraEvent = (event) => {
         issue: {
             id: event.issue.id as string,
             key: event.issue.key as string,
-            summary: event.issue.fields.summary as string,
-        },
+            summary: event.issue.fields.summary as string
+        }
     };
 
     switch (event.eventType) {
@@ -127,9 +127,9 @@ const getConfluenceEvent = (event) => {
             title: event.content.title as string,
             space: {
                 id: event.content.space.id as string,
-                key: event.content.space.key as string,
-            },
-        },
+                key: event.content.space.key as string
+            }
+        }
     };
 
     switch (event.eventType) {
@@ -166,8 +166,8 @@ const getConfluenceEvent = (event) => {
                 title: event.content.container.title,
                 space: {
                     id: event.content.space.id,
-                    key: event.content.space.key,
-                },
+                    key: event.content.space.key
+                }
             };
             break;
         case 'avi:confluence:viewed:page':

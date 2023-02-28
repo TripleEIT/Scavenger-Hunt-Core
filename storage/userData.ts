@@ -62,16 +62,14 @@ export const setJiraUserProperty = async (propertyName, propertyValue) => {
     try {
         const userData = await getJiraAppUser();
 
-        const response = await api
-            .asApp()
-            .requestJira(route`/rest/api/3/user/properties/${propertyName}?accountId=${userData.accountId}`, {
-                method: 'PUT',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(propertyValue)
-            });
+        const response = await api.asApp().requestJira(route`/rest/api/3/user/properties/${propertyName}?accountId=${userData.accountId}`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(propertyValue)
+        });
 
         if (response.status !== 204 && response.status !== 201 && response.status !== 200) {
             console.error(response);
@@ -115,15 +113,13 @@ export const setConfluenceUserProperty = async (propertyName, propertyValue) => 
             value: propertyValue
         };
 
-        const response = await api
-            .asApp()
-            .requestConfluence(route`/wiki/rest/api/user/${userData.accountId}/property/${propertyName}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(bodyData)
-            });
+        const response = await api.asApp().requestConfluence(route`/wiki/rest/api/user/${userData.accountId}/property/${propertyName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData)
+        });
 
         if (response.status !== 204 && response.status !== 201 && response.status !== 200) {
             console.error(response);
@@ -143,7 +139,7 @@ export const getConfluenceAppUser = async () => {
 
     const userData = await userDataResponse.json();
     return userData;
-}
+};
 
 export const getJiraAppUser = async () => {
     const userDataResponse = await api.asApp().requestJira(route`/rest/api/3/myself`, {
@@ -154,7 +150,7 @@ export const getJiraAppUser = async () => {
 
     const userData = await userDataResponse.json();
     return userData;
-}
+};
 
 export const isUserRegistered = async (accountId, autoRegister) => {};
 
@@ -162,7 +158,7 @@ export const getUserRecord = async (accountId, context: StandardContext) => {
     try {
         const userRecord = await getDistributedData(`${userPrefix}.${accountId}`, context.product);
         if (userRecord === null) {
-            let newUserRecord = {...defaultUserRecord, accountId: accountId};
+            let newUserRecord = { ...defaultUserRecord, accountId: accountId };
             console.debug('Creating new user record for', accountId, newUserRecord);
             await setUserRecord(accountId, newUserRecord, context);
             return newUserRecord as User;
@@ -217,7 +213,10 @@ export const awardUserAwardIncrement = async (standardEvent, awardWon, context) 
     let currentAwardBalance = userRecord.awardBalance.find((awardBalance) => awardBalance.id === awardWon.id);
     if (currentAwardBalance) {
         currentAwardBalance.balance += wonCount;
-        userRecord.awardBalance = [...userRecord.awardBalance.filter((awardBalance) => awardBalance.id != awardWon.id), currentAwardBalance];
+        userRecord.awardBalance = [
+            ...userRecord.awardBalance.filter((awardBalance) => awardBalance.id != awardWon.id),
+            currentAwardBalance
+        ];
     } else {
         userRecord.awardBalance.push({
             id: awardWon.id,

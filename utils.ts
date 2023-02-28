@@ -68,7 +68,7 @@ export const getStandardContext = (context, caller) => {
         environmentType: context.environmentType,
         extensionContext: context.extensionContext,
         caller: caller,
-        isLicensed: isLicenseActive(context),
+        isLicensed: isLicenseActive(context)
     } as StandardContext;
 
     if (context.installContext.indexOf('jira') > -1) {
@@ -81,11 +81,7 @@ export const getStandardContext = (context, caller) => {
 };
 
 // we'll standardize the events so that we can add a schedule or webhook trigger to the same function later
-export const getStandardEvent = async (
-    sourceEvent: ConfluenceEvent | JiraEvent,
-    context: StandardContext,
-    sourceName
-) => {
+export const getStandardEvent = async (sourceEvent: ConfluenceEvent | JiraEvent, context: StandardContext, sourceName) => {
     const standardEvent = {
         eventName: sourceEvent.eventName,
         eventDisplayName: sourceEvent.eventDisplayName,
@@ -94,7 +90,7 @@ export const getStandardEvent = async (
         source: sourceName,
         product: context.product,
         context: context,
-        event: sourceEvent,
+        event: sourceEvent
     };
 
     console.debug('Standard event: ', standardEvent);

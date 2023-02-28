@@ -27,7 +27,7 @@ export const getNewGenericAward = () => {
     } as AwardEntry;
 };
 
-export const blankAward : AwardEntry = {
+export const blankAward: AwardEntry = {
     id: '',
     name: '',
     description: '',
@@ -37,18 +37,18 @@ export const blankAward : AwardEntry = {
     enabled: false
 };
 
-export const firstIncrementEarnedMessage : string =
+export const firstIncrementEarnedMessage: string =
     '{{userMention}} earned their first {{awardIcon}} towards a {{awardName}}!  Only {{quantityRemaining}} more {{incrementName}} to go!  \r\nCheck the app page to see your progress.';
-export const incrementEarnedMessage : string =
+export const incrementEarnedMessage: string =
     '{{userMention}} earned one more {{incrementName}} towards a {{awardName}}, keep up the good work.';
-export const oneIncrementRemainingMessage : string =
+export const oneIncrementRemainingMessage: string =
     'There is only one {{increment}} remaining until {{userMention}} earns a {{awardName}}!  \r\nKeep an eye on the leaderboard to see how things are progressing.';
-export const awardEarnedMessage : string =
+export const awardEarnedMessage: string =
     '{{awardIcon}}{{awardIcon}}Congratulations {{userMention}}, you earned a {{awardName}}!{{awardIcon}}{{awardIcon}} \r\nYou can redeem your award from the Scavenger Hunt tab.';
 
-export const awardRedeemedMessage : string = 'Congratulations on collecting all of the increments needed, enjoy your reward!';
+export const awardRedeemedMessage: string = 'Congratulations on collecting all of the increments needed, enjoy your reward!';
 
-export const defaultAwardSuggestions : AwardEntry[] = [
+export const defaultAwardSuggestions: AwardEntry[] = [
     {
         id: 'award-three',
         name: 'Breakfast Treats',

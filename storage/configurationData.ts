@@ -45,7 +45,7 @@ export const getConfigurationSettings = async (context: StandardContext) => {
     try {
         if (configurationSettings) {
             console.debug('Using cached configuration settings');
-            return configurationSettings;
+            return configurationSettings as SharedConfiguration;
         }
 
         let settings = await getDistributedData(configurationSettingsKey, context.product);

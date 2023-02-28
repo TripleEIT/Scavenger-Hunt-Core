@@ -1,14 +1,14 @@
-import { PowerUpStatus, User } from "src/storage/userData";
+import { PowerUpStatus, User } from 'src/storage/userData';
 
 const defaultPowerUps: PowerUpStatus[] = [
     {
         type: 'doubleReward',
-        quantity: 2,
+        quantity: 2
     },
     {
         type: 'luckyCharm10',
-        quantity: 1,
-    },
+        quantity: 1
+    }
 ];
 
 export const defaultUserRecord: User = {
@@ -18,5 +18,5 @@ export const defaultUserRecord: User = {
     awardBalance: [],
     powerUpBalance: defaultPowerUps,
     activePowerUp: null,
-    activePowerUpExpiration: null,
+    activePowerUpExpiration: null
 };

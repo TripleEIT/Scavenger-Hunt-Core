@@ -69,7 +69,7 @@ export const getNarrowAward = (awardId: string, awardOptions: AwardEntry) => {
         enabled: awardOptions.enabled,
         outstandingAwards: awardOptions.outstandingAwards,
         incrementName: awardOptions.incrementName,
-        quantityRequired: awardOptions.quantityRequired,
+        quantityRequired: awardOptions.quantityRequired
     } as AwardEntryNarrow;
 };
 
@@ -122,10 +122,7 @@ export const getActiveProductAwards = async (product, context: StandardContext, 
         if (awardEnabled) {
             const awardOption = await getAwardOption(awardId, context);
             if (awardOption) {
-                if (
-                    Array.isArray(awardOption.availableLocations) &&
-                    awardOption.availableLocations.indexOf(product) > -1
-                ) {
+                if (Array.isArray(awardOption.availableLocations) && awardOption.availableLocations.indexOf(product) > -1) {
                     activeAwards.push(awardOption);
                 }
             } else {
@@ -145,19 +142,13 @@ export const recordAwardRedemption = async (award, userRecord) => {
         awardId: award.id,
         awardName: award.name,
         redemptionCode: redemptionCode,
-        date: new Date().toISOString(),
+        date: new Date().toISOString()
     };
 
     return redemptionRecord;
 };
 
-export const recordAwardedIncrementWon = async (
-    standardEvent,
-    awardWon,
-    context: StandardContext,
-    configuration,
-    updatedUser
-) => {
+export const recordAwardedIncrementWon = async (standardEvent, awardWon, context: StandardContext, configuration, updatedUser) => {
     try {
         const wonCount = getUserWinCount(standardEvent.userRecord);
         awardWon.outstandingAwards = awardWon.outstandingAwards - wonCount;
@@ -167,7 +158,7 @@ export const recordAwardedIncrementWon = async (
             difference: -wonCount,
             balance: awardWon.outstandingAwards,
             locations: [standardEvent.product],
-            date: new Date().toISOString(),
+            date: new Date().toISOString()
         };
 
         if (Array.isArray(awardWon.awardHistory)) {
@@ -181,10 +172,7 @@ export const recordAwardedIncrementWon = async (
 
         configuration.awards = [...configuration.awards.filter((award) => award.id !== awardWon.id), narrowAward];
 
-        configuration.activeUsers = [
-            ...configuration.activeUsers.filter((user) => user.accountId !== narrowUser.accountId),
-            narrowUser,
-        ];
+        configuration.activeUsers = [...configuration.activeUsers.filter((user) => user.accountId !== narrowUser.accountId), narrowUser];
 
         let promises = [];
         promises.push(setConfigurationSettings(configuration, context));

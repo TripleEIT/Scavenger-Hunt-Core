@@ -8,10 +8,10 @@ export const defaultJiraConfiguration: JiraConfiguration = {
     issueCommented: true,
     issueCreatedProbability: 8,
     issueUpdatedProbability: 5,
-    issueCommentedProbability: 8,
+    issueCommentedProbability: 8
 };
 
-export const defaultConfluenceConfiguration : ConfluenceConfiguration = {
+export const defaultConfluenceConfiguration: ConfluenceConfiguration = {
     pageCreated: true,
     pageUpdated: true,
     pageLiked: true,
@@ -25,7 +25,7 @@ export const defaultConfluenceConfiguration : ConfluenceConfiguration = {
     blogCreatedProbability: 22,
     blogUpdatedProbability: 10,
     blogLikedProbability: 5,
-    commentCreatedProbability: 12,
+    commentCreatedProbability: 12
 };
 
 export const defaultSharedConfiguration = {
@@ -33,5 +33,5 @@ export const defaultSharedConfiguration = {
     jiraOptions: defaultJiraConfiguration,
     confluenceOptions: defaultConfluenceConfiguration,
     activeUsers: [],
-    redemptions: [],
+    redemptions: []
 };

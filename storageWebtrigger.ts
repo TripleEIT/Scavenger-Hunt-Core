@@ -29,7 +29,8 @@ export const storeReceivedData = async (request, context) => {
 };
 
 export const fetchStoredData = async (request, context: StandardContext) => {
-    const endpointRequest = getEndpointRequest(request, context, 'fetchStoredData');
+    const standardContext = getStandardContext(context, 'webhook');
+    const endpointRequest = getEndpointRequest(request, standardContext, 'fetchStoredData');
     if (!endpointRequest) {
         return null;
     }
@@ -53,8 +54,9 @@ export const fetchStoredData = async (request, context: StandardContext) => {
     }
 };
 
-export const deleteStoredData = async (request, context: StandardContext) => {
-    const endpointRequest = getEndpointRequest(request, context, 'deleteStoredData');
+export const deleteStoredData = async (request, context) => {
+    const standardContext = getStandardContext(context, 'webhook');
+    const endpointRequest = getEndpointRequest(request, standardContext, 'deleteStoredData');
     if (!endpointRequest) {
         return null;
     }
@@ -119,15 +121,11 @@ const getEndpointRequest = (request, context: StandardContext, name) => {
     return endpointRequest;
 };
 
-// This is far from secure but it protects users from finding the endpoint and calling it
 const isValidRequest = (request) => {
     if (request.method !== 'POST') {
         console.error('Invalid request method:', request.method);
         return false;
-    } else if (
-        Array.isArray(request.headers['content-type'][0]) &&
-        request.headers['content-type'][0].toString() !== 'application/json'
-    ) {
+    } else if (Array.isArray(request.headers['content-type'][0]) && request.headers['content-type'][0].toString() !== 'application/json') {
         console.error('Invalid content type:', request.headers['content-type']);
         return false;
     } else if (!request.body) {

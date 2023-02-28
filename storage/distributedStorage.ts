@@ -1,8 +1,8 @@
-import { getNonSelfStorageEndpoint } from './endpointManager';
+import { getNonSelfStorageEndpoint, StorageEndpoints } from './endpointManager';
 import { fetch, storage } from '@forge/api';
 import { storageKey } from '../storageWebtrigger';
 
-let nonSelfEndpoint;
+let nonSelfEndpoint: StorageEndpoints = null;
 
 export const getDistributedData = async (key: string, currentProduct: string) => {
     // check locally first, and then check the distributed storage
@@ -30,9 +30,9 @@ export const getDistributedData = async (key: string, currentProduct: string) =>
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey,
+            'x-storage-key': storageKey
         },
-        body: `{ "key" : "${key}" }`,
+        body: `{ "key" : "${key}" }`
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.fetchData, storageRequest);
@@ -63,7 +63,7 @@ export const setDistributedData = async (key: string, value: any, currentProduct
 
     const bodyPayload = {
         key: key,
-        value: value,
+        value: value
     };
 
     const storageRequest = {
@@ -71,9 +71,9 @@ export const setDistributedData = async (key: string, value: any, currentProduct
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey,
+            'x-storage-key': storageKey
         },
-        body: JSON.stringify(bodyPayload),
+        body: JSON.stringify(bodyPayload)
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.storeData, storageRequest);
@@ -95,7 +95,7 @@ export const deleteDistributedData = async (key: string, currentProduct: string)
     }
 
     const bodyPayload = {
-        key: key,
+        key: key
     };
 
     const storageRequest = {
@@ -103,9 +103,9 @@ export const deleteDistributedData = async (key: string, currentProduct: string)
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'x-storage-key': storageKey,
+            'x-storage-key': storageKey
         },
-        body: JSON.stringify(bodyPayload),
+        body: JSON.stringify(bodyPayload)
     };
 
     const storageResponse = await fetch(nonSelfEndpoint.deleteData, storageRequest);

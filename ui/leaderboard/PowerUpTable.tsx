@@ -1,5 +1,4 @@
 import ForgeUI, { Button, Cell, Fragment, Head, Heading, Row, Table, Text, useState } from '@forge/ui';
-import { Context } from 'mustache';
 import { getPowerUpDefinition } from '../../defaults/powerUpSettings';
 import { setConfigurationSettings } from '../../storage/configurationData';
 import { getNarrowUserRecord, getUserRecord, setUserRecord } from '../../storage/userData';
@@ -22,17 +21,14 @@ export const PowerUpTable = (props) => {
 
         setUserDetails(userDetails);
         setPowerUpBalance(userDetails.powerUpBalance);
-        
+
         const narrowUser = getNarrowUserRecord(userDetails);
         const updatedConfig = {
             ...currentConfig,
             activeUsers: [...currentConfig.activeUsers.filter((user) => user.accountId != userDetails.accountId), narrowUser]
         };
 
-        await Promise.all([
-            setConfigurationSettings(updatedConfig, context),
-            setUserRecord(userDetails.accountId, userDetails, context)
-        ]);
+        await Promise.all([setConfigurationSettings(updatedConfig, context), setUserRecord(userDetails.accountId, userDetails, context)]);
     };
 
     return (
@@ -74,7 +70,7 @@ export const PowerUpTable = (props) => {
                             </Cell>
                             <Cell>
                                 {powerUp.quantity > 0 && (
-                                    <Button text='Use PowerUp' appearance='link' onClick={async () => usePowerUp(powerUp.type)} />
+                                    <Button text="Use PowerUp" appearance="link" onClick={async () => usePowerUp(powerUp.type)} />
                                 )}
                                 {powerUp.quantity == 0 && <Text>None Available</Text>}
                             </Cell>

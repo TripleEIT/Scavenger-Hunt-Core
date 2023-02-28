@@ -1,27 +1,15 @@
-import { storage } from '@forge/api';
-import ForgeUI, {
-    render,
-    AdminPage,
-    Fragment,
-    GlobalSettings,
-    useState,
-    Button,
-    useProductContext,
-    Tabs,
-    Tab,
-    Text,
-} from '@forge/ui';
-import { defaultSharedConfiguration } from './defaults/initialConfiguration';
-import { getConfigurationSettings, setConfigurationSettings } from './storage/configurationData';
-import { deleteDistributedData } from './storage/distributedStorage';
+import ForgeUI, { render, AdminPage, Fragment, GlobalSettings, useState, Button, useProductContext, Tabs, Tab, Text } from '@forge/ui';
+import { getConfigurationSettings, setConfigurationSettings, SharedConfiguration } from './storage/configurationData';
 import { AwardOptionsTable } from './ui/configuration/AwardOptionsTable';
 import { JiraOptions } from './ui/configuration/JiraOptions';
 import { ConfluenceOptions } from './ui/configuration/ConfluenceOptions';
 import { getStandardContext } from './utils';
 import { RedemptionTable } from './ui/configuration/RedemptionTable';
+import { AdvancedConfiguration } from './ui/configuration/AdvancedConfiguration';
 
 const SharedSettings = () => {
     const context = getStandardContext(useProductContext(), 'user');
+    console.log('context', context);
 
     if (context.isLicensed === false) {
         console.error('License not found', useProductContext());
@@ -34,7 +22,7 @@ const SharedSettings = () => {
 
     const [currentConfig, setCurrentConfig] = useState(async () => getConfigurationSettings(context));
 
-    const saveSettings = async (newConfig) => {
+    const saveSettings = async (newConfig: SharedConfiguration) => {
         console.debug('saving a new config via the settings page');
         newConfig.awards = [...newConfig.awards].sort((a, b) => {
             let fa = a.name.toLowerCase(),
@@ -52,46 +40,27 @@ const SharedSettings = () => {
         setCurrentConfig(newConfig);
     };
 
-    const resetSettings = async () => {
-        console.debug('resetting settings');
-        let storageEntries = await storage.query().limit(18).getMany();
-        while (storageEntries.results.length > 0) {
-            for (let i = 0; i < storageEntries.results.length; i++) {
-                console.debug(`deleting ${storageEntries.results[i].key}`);
-                console.warn(await deleteDistributedData(storageEntries.results[i].key, context.product));
-            }
-            storageEntries = await storage.query().limit(18).getMany();
-        }
-
-        setCurrentConfig(defaultSharedConfiguration);
-    };
-
     return (
         <Fragment>
             <Tabs>
                 <Tab label="Award Configuration">
-                    <AwardOptionsTable
-                        currentConfig={currentConfig}
-                        setCurrentConfig={saveSettings}
-                        context={context}
-                    />
+                    <AwardOptionsTable currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
                 </Tab>
-                <Tab label="Jira Activities">
-                    <JiraOptions currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
-                </Tab>
-                <Tab label="Confluence Activities">
-                    <ConfluenceOptions
-                        currentConfig={currentConfig}
-                        setCurrentConfig={saveSettings}
-                        context={context}
-                    />
-                </Tab>
+                {context.product === 'jira' && (
+                    <Tab label="Jira Activities">
+                        <JiraOptions currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
+                    </Tab>
+                )}
+                {context.product === 'confluence' && (
+                    <Tab label="Confluence Activities">
+                        <ConfluenceOptions currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
+                    </Tab>
+                )}
                 <Tab label="Redemption">
                     <RedemptionTable currentConfig={currentConfig} setCurrentConfig={saveSettings} />
                 </Tab>
                 <Tab label="Advanced">
-                    <Text>{`Delete everything created by this app and stored in ${context.product.toUpperCase()}`}</Text>
-                    <Button text="Reset Configuration" onClick={resetSettings} appearance="danger" />
+                    <AdvancedConfiguration currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
                 </Tab>
             </Tabs>
         </Fragment>
