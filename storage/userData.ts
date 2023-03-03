@@ -10,13 +10,13 @@ export interface PowerUpStatus {
     quantity: number;
 }
 
-export interface AwardActivity {
-    awardId: string;
-    awardName: string;
+export interface RewardActivity {
+    rewardId: string;
+    rewardName: string;
     incrementName: string;
     incrementsWon: number;
     activePowerUp?: string;
-    awardActivity: string;
+    rewardActivity: string;
     date: string;
 }
 
@@ -27,9 +27,9 @@ export interface BalanceActivity {
 
 export interface User {
     accountId: string;
-    awardActivity: AwardActivity[];
+    rewardActivity: RewardActivity[];
     powerUpActivity: string[];
-    awardBalance: BalanceActivity[];
+    rewardBalance: BalanceActivity[];
     powerUpBalance: PowerUpStatus[];
     activePowerUp: string;
     activePowerUpExpiration: number; // timestamp
@@ -189,37 +189,37 @@ export const deleteUserRecord = async (accountId, context: StandardContext) => {
 export const getNarrowUserRecord = (userRecord) => {
     return {
         accountId: userRecord.accountId,
-        awardBalance: userRecord.awardBalance,
+        rewardBalance: userRecord.rewardBalance,
         activePowerUp: userRecord.activePowerUp,
         activePowerUpExpiration: userRecord.activePowerUpExpiration
     };
 };
 
-export const awardUserAwardIncrement = async (standardEvent, awardWon, context) => {
+export const rewardUserRewardIncrement = async (standardEvent, rewardWon, context) => {
     const wonCount = getUserWinCount(standardEvent.userRecord);
 
     let userRecord = standardEvent.userRecord;
 
-    userRecord.awardActivity.push({
-        awardId: awardWon.id,
-        awardName: awardWon.name,
-        incrementName: awardWon.incrementName,
+    userRecord.rewardActivity.push({
+        rewardId: rewardWon.id,
+        rewardName: rewardWon.name,
+        incrementName: rewardWon.incrementName,
         incrementsWon: wonCount,
         activePowerUp: userRecord.activePowerUp,
-        awardActivity: standardEvent.eventDisplayName,
+        rewardActivity: standardEvent.eventDisplayName,
         date: new Date().toISOString()
     });
 
-    let currentAwardBalance = userRecord.awardBalance.find((awardBalance) => awardBalance.id === awardWon.id);
-    if (currentAwardBalance) {
-        currentAwardBalance.balance += wonCount;
-        userRecord.awardBalance = [
-            ...userRecord.awardBalance.filter((awardBalance) => awardBalance.id != awardWon.id),
-            currentAwardBalance
+    let currentRewardBalance = userRecord.rewardBalance.find((rewardBalance) => rewardBalance.id === rewardWon.id);
+    if (currentRewardBalance) {
+        currentRewardBalance.balance += wonCount;
+        userRecord.rewardBalance = [
+            ...userRecord.rewardBalance.filter((rewardBalance) => rewardBalance.id != rewardWon.id),
+            currentRewardBalance
         ];
     } else {
-        userRecord.awardBalance.push({
-            id: awardWon.id,
+        userRecord.rewardBalance.push({
+            id: rewardWon.id,
             balance: wonCount
         });
     }

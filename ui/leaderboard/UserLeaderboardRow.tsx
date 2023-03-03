@@ -1,14 +1,14 @@
 import ForgeUI, { Button, Cell, Row, Text, User } from '@forge/ui';
 import { ActivePowerUp } from './ActivePowerUp';
 
-const getAwardBalance = (user, award) => {
-    const awardBalance = user.awardBalance.find((awardBalance) => awardBalance.id === award.id);
-    const balanceValue = awardBalance ? awardBalance.balance : 0;
-    return `${balanceValue} ${award.incrementName}`;
+const getRewardBalance = (user, reward) => {
+    const rewardBalance = user.rewardBalance.find((rewardBalance) => rewardBalance.id === reward.id);
+    const balanceValue = rewardBalance ? rewardBalance.balance : 0;
+    return `${balanceValue} ${reward.incrementName}`;
 };
 
 export const UserLeaderboardRow = (props) => {
-    const { user, awards, setViewingUserState } = props;
+    const { user, rewards, setViewingUserState } = props;
 
     return (
         <Row>
@@ -18,10 +18,10 @@ export const UserLeaderboardRow = (props) => {
             <Cell>
                 <ActivePowerUp user={user} />
             </Cell>
-            {awards.map((award) => {
+            {rewards.map((reward) => {
                 return (
                     <Cell>
-                        <Text>{getAwardBalance(user, award)}</Text>
+                        <Text>{getRewardBalance(user, reward)}</Text>
                     </Cell>
                 );
             })}

@@ -1,6 +1,6 @@
 import ForgeUI, { Fragment, useState, Text, Heading, Table, Head, Cell } from '@forge/ui';
 import { getConfigurationSettings, setConfigurationSettings } from '../../storage/configurationData';
-import { UserAwardHistoryModal } from './UserAwardHistoryModal';
+import { UserRewardHistoryModal } from './UserRewardHistoryModal';
 import { UserLeaderboardRow } from './UserLeaderboardRow';
 
 export const LeaderboardTable = (props) => {
@@ -25,10 +25,10 @@ export const LeaderboardTable = (props) => {
                     <Cell>
                         <Text>Active PowerUp</Text>
                     </Cell>
-                    {currentConfig.awards.map((award) => {
+                    {currentConfig.rewards.map((reward) => {
                         return (
                             <Cell>
-                                <Text>{award.name}</Text>
+                                <Text>{reward.name}</Text>
                             </Cell>
                         );
                     })}
@@ -37,12 +37,12 @@ export const LeaderboardTable = (props) => {
                     </Cell>
                 </Head>
                 {currentConfig.activeUsers.map((user) => {
-                    return <UserLeaderboardRow user={user} awards={currentConfig.awards} setViewingUserState={setViewingUserState} />;
+                    return <UserLeaderboardRow user={user} rewards={currentConfig.rewards} setViewingUserState={setViewingUserState} />;
                 })}
             </Table>
 
             {/* This is another instance of a nested table and it needs to be outside of the table above */}
-            <UserAwardHistoryModal viewingUserState={viewingUserState} context={context} setViewingUserState={setViewingUserState} />
+            <UserRewardHistoryModal viewingUserState={viewingUserState} context={context} setViewingUserState={setViewingUserState} />
         </Fragment>
     );
 };

@@ -22,14 +22,17 @@ export const AdvancedConfiguration = (props) => {
     const resetSettings = async () => {
         console.debug('resetting settings');
         let storageEntries = await storage.query().limit(10).getMany();
-        while (storageEntries.results.length > 0) {
+        while (storageEntries.results.length > 1) {
             for (let i = 0; i < storageEntries.results.length; i++) {
-                console.debug(`deleting ${storageEntries.results[i].key}`);
-                console.warn(await deleteDistributedData(storageEntries.results[i].key, context.product));
+                // this entry gets auto-created and generates a loop, so we manually delete it
+                if (storageEntries.results[i].key !== 'knownEndpoints') {
+                    console.debug(`deleting ${storageEntries.results[i].key}`);
+                    await deleteDistributedData(storageEntries.results[i].key, context.product);
+                }
             }
             storageEntries = await storage.query().limit(18).getMany();
         }
-
+        await deleteDistributedData('knownEndpoints', context.product);
         setCurrentConfig(defaultSharedConfiguration);
     };
 

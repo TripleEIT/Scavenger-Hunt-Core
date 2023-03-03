@@ -1,6 +1,6 @@
 import { StandardContext } from 'src/utils';
 import { defaultSharedConfiguration } from '../defaults/initialConfiguration';
-import { AwardEntry } from './awardData';
+import { RewardEntry } from './rewardData';
 import { deleteDistributedData, getDistributedData, setDistributedData } from './distributedStorage';
 import { getUserRecord } from './userData';
 
@@ -34,7 +34,7 @@ export interface ConfluenceConfiguration {
 }
 
 export interface SharedConfiguration {
-    awards: AwardEntry[];
+    rewards: RewardEntry[];
     jiraOptions: JiraConfiguration;
     confluenceOptions: ConfluenceConfiguration;
     activeUsers: string[];

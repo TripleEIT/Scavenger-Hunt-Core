@@ -1,46 +1,46 @@
 import ForgeUI, { Button, Cell, Fragment, Head, Heading, ModalDialog, Row, Table, Text, useState } from '@forge/ui';
 import { render } from 'mustache';
-import { awardRedeemedMessage } from '../../defaults/awardSuggestions';
-import { getAwardOption, recordAwardRedemption } from '../../storage/awardData';
+import { rewardRedeemedMessage } from '../../defaults/rewardSuggestions';
+import { getRewardOption, recordRewardRedemption } from '../../storage/rewardData';
 import { setConfigurationSettings } from '../../storage/configurationData';
 import { getNarrowUserRecord, setUserRecord } from '../../storage/userData';
 
-export const RedeemAwardsBlock = (props) => {
+export const RedeemRewardsBlock = (props) => {
     const { userDetails, setUserDetails, currentConfig, setCurrentConfig, context } = props;
     const [isRedeeming, setIsRedeeming] = useState({ isRedeeming: false, message: null, redemptionCode: null });
 
-    const redeemAward = async (awardId) => {
-        const awardData = await getAwardOption(awardId, context);
-        const awardBalance = userDetails.awardBalance.find((awardBalance) => awardBalance.id == awardId);
-        if (awardBalance && awardBalance.balance >= awardData.quantityRequired) {
-            console.info(`Redeeming award ${awardId} for ${awardData.quantityRequired} for user ${userDetails.accountId}`);
+    const redeemReward = async (rewardId) => {
+        const rewardData = await getRewardOption(rewardId, context);
+        const rewardBalance = userDetails.rewardBalance.find((rewardBalance) => rewardBalance.id == rewardId);
+        if (rewardBalance && rewardBalance.balance >= rewardData.quantityRequired) {
+            console.info(`Redeeming reward ${rewardId} for ${rewardData.quantityRequired} for user ${userDetails.accountId}`);
 
-            const newAwardBalance = { id: awardId, balance: awardBalance.balance - awardData.quantityRequired };
+            const newRewardBalance = { id: rewardId, balance: rewardBalance.balance - rewardData.quantityRequired };
             const newUserDetails = {
                 ...userDetails,
-                awardBalance: [...userDetails.awardBalance.filter((awardBalance) => awardBalance.id != awardId), newAwardBalance]
+                rewardBalance: [...userDetails.rewardBalance.filter((rewardBalance) => rewardBalance.id != rewardId), newRewardBalance]
             };
 
-            newUserDetails.awardActivity.push({
-                awardId: awardData.id,
-                awardName: awardData.name,
-                incrementName: awardData.incrementName,
-                incrementsWon: awardData.quantityRequired,
+            newUserDetails.rewardActivity.push({
+                rewardId: rewardData.id,
+                rewardName: rewardData.name,
+                incrementName: rewardData.incrementName,
+                incrementsWon: rewardData.quantityRequired,
                 activePowerUp: null,
-                awardActivity: 'Redeemed',
+                rewardActivity: 'Redeemed',
                 date: new Date().toISOString()
             });
 
             const newNarrowUserDetails = getNarrowUserRecord(newUserDetails);
 
-            const redemptionRecord = await recordAwardRedemption(awardData, userDetails);//, context, currentConfig);
+            const redemptionRecord = await recordRewardRedemption(rewardData, userDetails);//, context, currentConfig);
             const newConfig = {
                 ...currentConfig,
                 activeUsers: [
                     ...currentConfig.activeUsers.filter((user) => user.accountId != newUserDetails.accountId),
                     newNarrowUserDetails
                 ],
-                awards: [...currentConfig.awards],
+                rewards: [...currentConfig.rewards],
                 redemptions: [...(currentConfig?.redemptions ?? []), redemptionRecord]
             };
 
@@ -49,7 +49,7 @@ export const RedeemAwardsBlock = (props) => {
 
             setIsRedeeming({
                 isRedeeming: true,
-                message: awardData.awardRedeemedMessage ?? awardRedeemedMessage,
+                message: rewardData.rewardRedeemedMessage ?? rewardRedeemedMessage,
                 redemptionCode: redemptionRecord.redemptionCode
             });
 
@@ -66,7 +66,7 @@ export const RedeemAwardsBlock = (props) => {
             <Table>
                 <Head>
                     <Cell>
-                        <Text>Award Name</Text>
+                        <Text>Reward Name</Text>
                     </Cell>
                     <Cell>
                         <Text>Description</Text>
@@ -81,30 +81,30 @@ export const RedeemAwardsBlock = (props) => {
                         <Text>Actions</Text>
                     </Cell>
                 </Head>
-                {currentConfig.awards
-                    .filter((award) => award.enabled)
-                    .map((award) => {
-                        const awardBalance = userDetails.awardBalance.find((awardBalance) => awardBalance.id == award.id);
+                {currentConfig.rewards
+                    .filter((reward) => reward.enabled)
+                    .map((reward) => {
+                        const rewardBalance = userDetails.rewardBalance.find((rewardBalance) => rewardBalance.id == reward.id);
                         return (
                             <Row>
                                 <Cell>
-                                    <Text>{award.name}</Text>
+                                    <Text>{reward.name}</Text>
                                 </Cell>
                                 <Cell>
-                                    <Text>{award.description}</Text>
+                                    <Text>{reward.description}</Text>
                                 </Cell>
                                 <Cell>
-                                    <Text>{awardBalance ? awardBalance.balance : 0}</Text>
+                                    <Text>{rewardBalance ? rewardBalance.balance : 0}</Text>
                                 </Cell>
                                 <Cell>
-                                    <Text>{award.quantityRequired}</Text>
+                                    <Text>{reward.quantityRequired}</Text>
                                 </Cell>
                                 <Cell>
-                                    {awardBalance && awardBalance.balance >= award.quantityRequired && (
-                                        <Button text='Redeem Award' appearance='primary' onClick={async () => redeemAward(award.id)} />
+                                    {rewardBalance && rewardBalance.balance >= reward.quantityRequired && (
+                                        <Button text='Redeem Reward' appearance='primary' onClick={async () => redeemReward(reward.id)} />
                                     )}
-                                    {awardBalance && awardBalance.balance < award.quantityRequired && <Text>Not Enough Yet</Text>}
-                                    {!awardBalance && <Text>Not Enough Yet</Text>}
+                                    {rewardBalance && rewardBalance.balance < reward.quantityRequired && <Text>Not Enough Yet</Text>}
+                                    {!rewardBalance && <Text>Not Enough Yet</Text>}
                                 </Cell>
                             </Row>
                         );

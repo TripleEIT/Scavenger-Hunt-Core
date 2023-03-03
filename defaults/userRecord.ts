@@ -13,9 +13,9 @@ const defaultPowerUps: PowerUpStatus[] = [
 
 export const defaultUserRecord: User = {
     accountId: '',
-    awardActivity: [],
+    rewardActivity: [],
     powerUpActivity: [],
-    awardBalance: [],
+    rewardBalance: [],
     powerUpBalance: defaultPowerUps,
     activePowerUp: null,
     activePowerUpExpiration: null

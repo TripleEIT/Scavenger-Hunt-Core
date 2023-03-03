@@ -1,13 +1,13 @@
 import api, { route } from '@forge/api';
 import { render } from 'mustache';
 import {
-    awardEarnedMessage,
+    rewardEarnedMessage,
     firstIncrementEarnedMessage,
     incrementEarnedMessage,
     oneIncrementRemainingMessage
-} from '../defaults/awardSuggestions';
+} from '../defaults/rewardSuggestions';
 
-export const commentOnIssue = async (standardEvent, awardWon, context) => {
+export const commentOnIssue = async (standardEvent, rewardWon, context) => {
     const comment = {
         body: {
             version: 1,
@@ -15,7 +15,7 @@ export const commentOnIssue = async (standardEvent, awardWon, context) => {
             content: [
                 {
                     type: 'paragraph',
-                    content: createCommentContent(standardEvent, awardWon)
+                    content: createCommentContent(standardEvent, rewardWon)
                 }
             ]
         }
@@ -37,7 +37,7 @@ export const commentOnIssue = async (standardEvent, awardWon, context) => {
     }
 };
 
-export const commentOnConfluenceContent = async (standardEvent, awardWon, context) => {
+export const commentOnConfluenceContent = async (standardEvent, rewardWon, context) => {
     const comment = {
         type: 'comment',
         space: {
@@ -52,13 +52,13 @@ export const commentOnConfluenceContent = async (standardEvent, awardWon, contex
                     content: [
                         {
                             type: 'paragraph',
-                            content: createCommentContent(standardEvent, awardWon)
+                            content: createCommentContent(standardEvent, rewardWon)
                         }
                     ]
                 })
             }
         },
-        title: 'Scavenger Hunt Award',
+        title: 'Scavenger Hunt Reward',
         container: {
             id: standardEvent.event.content.id,
             type: 'global',
@@ -84,31 +84,31 @@ export const commentOnConfluenceContent = async (standardEvent, awardWon, contex
     return await response.json();
 };
 
-export const createCommentContent = (standardEvent, awardWon) => {
-    const eventVariables = generateVariables(standardEvent, awardWon);
-    let messageTemplate = awardWon.incrementEarnedMessage ?? incrementEarnedMessage;
+export const createCommentContent = (standardEvent, rewardWon) => {
+    const eventVariables = generateVariables(standardEvent, rewardWon);
+    let messageTemplate = rewardWon.incrementEarnedMessage ?? incrementEarnedMessage;
 
     if (eventVariables.firstIncrement) {
-        messageTemplate = awardWon.firstIncrementEarnedMessage ?? firstIncrementEarnedMessage;
+        messageTemplate = rewardWon.firstIncrementEarnedMessage ?? firstIncrementEarnedMessage;
     } else if (eventVariables.oneIncrementRemaining) {
-        messageTemplate = awardWon.oneIncrementRemainingMessage ?? oneIncrementRemainingMessage;
-    } else if (eventVariables.awardWon) {
-        messageTemplate = awardWon.awardEarnedMessage ?? awardEarnedMessage;
+        messageTemplate = rewardWon.oneIncrementRemainingMessage ?? oneIncrementRemainingMessage;
+    } else if (eventVariables.rewardWon) {
+        messageTemplate = rewardWon.rewardEarnedMessage ?? rewardEarnedMessage;
     }
 
     const renderedMessage = render(messageTemplate ?? 'missing template', eventVariables);
 
-    return createAdfBlocks(renderedMessage, standardEvent, awardWon);
+    return createAdfBlocks(renderedMessage, standardEvent, rewardWon);
 };
 
 // this is a bit of a hack to get the user mention to work in the comment, if ADF starts causing issues.
-const createConfluenceContent = (baseMessage, standardEvent, awardWon) => {
+const createConfluenceContent = (baseMessage, standardEvent, rewardWon) => {
     let confluenceContent = '';
     baseMessage.split('|§|').forEach((block) => {
         if (block === 'userMention') {
             confluenceContent += getConfluenceUserMention(standardEvent.accountId);
-        } else if (block === 'awardIcon') {
-            confluenceContent += getConfluenceIcon(awardWon.icon);
+        } else if (block === 'rewardIcon') {
+            confluenceContent += getConfluenceIcon(rewardWon.icon);
         } else if (block != '') {
             confluenceContent += block;
         }
@@ -117,13 +117,13 @@ const createConfluenceContent = (baseMessage, standardEvent, awardWon) => {
     return confluenceContent;
 };
 
-const createAdfBlocks = (baseMessage, standardEvent, awardWon) => {
+const createAdfBlocks = (baseMessage, standardEvent, rewardWon) => {
     const adfContentBlocks = [];
     baseMessage.split('|§|').forEach((block) => {
         if (block === 'userMention') {
             adfContentBlocks.push(userMentionBlock(standardEvent.accountId));
-        } else if (block === 'awardIcon') {
-            adfContentBlocks.push(awardIconBlock(awardWon.icon));
+        } else if (block === 'rewardIcon') {
+            adfContentBlocks.push(rewardIconBlock(rewardWon.icon));
         } else if (block != '') {
             adfContentBlocks.push(textBlock(block));
         }
@@ -141,11 +141,11 @@ const userMentionBlock = (accountId) => {
     };
 };
 
-const awardIconBlock = (awardIcon) => {
+const rewardIconBlock = (rewardIcon) => {
     return {
         type: 'emoji',
         attrs: {
-            shortName: awardIcon
+            shortName: rewardIcon
         }
     };
 };
@@ -157,24 +157,24 @@ const textBlock = (text) => {
     };
 };
 
-export const generateVariables = (standardEvent, awardWon) => {
-    console.debug('user award balance', standardEvent.userRecord.awardBalance);
-    const currentBalance: number = standardEvent.userRecord?.awardBalance?.find((award) => award.id === awardWon.id).balance ?? 0;
+export const generateVariables = (standardEvent, rewardWon) => {
+    console.debug('user reward balance', standardEvent.userRecord.rewardBalance);
+    const currentBalance: number = standardEvent.userRecord?.rewardBalance?.find((reward) => reward.id === rewardWon.id).balance ?? 0;
 
     let variables = {
         currentBalance: currentBalance,
         firstIncrement: currentBalance === 1,
-        oneIncrementRemaining: currentBalance === awardWon.quantityRequired - 1,
-        awardWon: currentBalance === awardWon.quantityRequired,
+        oneIncrementRemaining: currentBalance === rewardWon.quantityRequired - 1,
+        rewardWon: currentBalance === rewardWon.quantityRequired,
         userMention: '|§|userMention|§|',
         actionPerformed: standardEvent.eventDisplayName,
-        incrementName: awardWon.incrementName,
-        increment: awardWon.incrementName,
-        quantityRequired: awardWon.quantityRequired,
-        quantityRemaining: awardWon.quantityRequired - currentBalance,
-        awardName: awardWon.name,
-        awardDescription: awardWon.description,
-        awardIcon: '|§|awardIcon|§|'
+        incrementName: rewardWon.incrementName,
+        increment: rewardWon.incrementName,
+        quantityRequired: rewardWon.quantityRequired,
+        quantityRemaining: rewardWon.quantityRequired - currentBalance,
+        rewardName: rewardWon.name,
+        rewardDescription: rewardWon.description,
+        rewardIcon: '|§|rewardIcon|§|'
     };
 
     console.debug('variables:', variables);
@@ -185,6 +185,6 @@ const getConfluenceUserMention = (accountId) => {
     return `<ac:link><ri:user ri:account-id="${accountId}" /></ac:link>`;
 };
 
-const getConfluenceIcon = (awardIcon) => {
-    return `<ac:emoticon ac:name="laugh" ac:emoji-id="1f600" ac:emoji-fallback="😀" ac:emoji-shortname="${awardIcon}" />`;
+const getConfluenceIcon = (rewardIcon) => {
+    return `<ac:emoticon ac:name="laugh" ac:emoji-id="1f600" ac:emoji-fallback="😀" ac:emoji-shortname="${rewardIcon}" />`;
 };

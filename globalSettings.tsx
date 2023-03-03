@@ -1,6 +1,6 @@
 import ForgeUI, { render, AdminPage, Fragment, GlobalSettings, useState, Button, useProductContext, Tabs, Tab, Text } from '@forge/ui';
 import { getConfigurationSettings, setConfigurationSettings, SharedConfiguration } from './storage/configurationData';
-import { AwardOptionsTable } from './ui/configuration/AwardOptionsTable';
+import { RewardOptionsTable } from './ui/configuration/RewardOptionsTable';
 import { JiraOptions } from './ui/configuration/JiraOptions';
 import { ConfluenceOptions } from './ui/configuration/ConfluenceOptions';
 import { getStandardContext } from './utils';
@@ -20,10 +20,12 @@ const SharedSettings = () => {
     }
 
     const [currentConfig, setCurrentConfig] = useState(async () => getConfigurationSettings(context));
+    console.log('currentConfig', currentConfig);
+    
 
     const saveSettings = async (newConfig: SharedConfiguration) => {
         console.debug('saving a new config via the settings page');
-        newConfig.awards = [...newConfig.awards].sort((a, b) => {
+        newConfig.rewards = [...newConfig.rewards].sort((a, b) => {
             let fa = a.name.toLowerCase(),
                 fb = b.name.toLowerCase();
 
@@ -42,8 +44,8 @@ const SharedSettings = () => {
     return (
         <Fragment>
             <Tabs>
-                <Tab label="Award Configuration">
-                    <AwardOptionsTable currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
+                <Tab label="Reward Configuration">
+                    <RewardOptionsTable currentConfig={currentConfig} setCurrentConfig={saveSettings} context={context} />
                 </Tab>
                 {context.product === 'jira' && (
                     <Tab label="Jira Activities">

@@ -1,5 +1,5 @@
-import { doesEventTriggerAward } from './engine/awardProbability';
-import { grantUserConfluenceAward, grantUserJiraAward } from './engine/awardEngine';
+import { doesEventTriggerReward } from './engine/rewardProbability';
+import { grantUserConfluenceReward, grantUserJiraReward } from './engine/rewardEngine';
 import { getConfigurationSettings } from './storage/configurationData';
 import { getStandardContext, getStandardEvent } from './utils';
 import { getConfluenceAppUser, getJiraAppUser } from './storage/userData';
@@ -49,9 +49,9 @@ export async function processJiraEvent(event, context) {
 
     const configurationSettings = await getConfigurationSettings(context);
     const standardEvent = await getStandardEvent(jiraEvent, standardContext, 'eventTrigger');
-    const receivesAward = doesEventTriggerAward(standardEvent, configurationSettings);
-    if (receivesAward) {
-        await grantUserJiraAward(standardEvent, configurationSettings);
+    const receivesReward = doesEventTriggerReward(standardEvent, configurationSettings);
+    if (receivesReward) {
+        await grantUserJiraReward(standardEvent, configurationSettings);
     }
 }
 
@@ -71,10 +71,10 @@ export async function processConfluenceEvent(event, context) {
 
     const configurationSettings = await getConfigurationSettings(context);
     const standardEvent = await getStandardEvent(confluenceEvent, standardContext, 'eventTrigger');
-    const receivesAward = doesEventTriggerAward(standardEvent, configurationSettings);
+    const receivesReward = doesEventTriggerReward(standardEvent, configurationSettings);
 
-    if (receivesAward) {
-        await grantUserConfluenceAward(standardEvent, configurationSettings);
+    if (receivesReward) {
+        await grantUserConfluenceReward(standardEvent, configurationSettings);
     }
 }
 

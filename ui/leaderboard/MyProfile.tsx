@@ -4,7 +4,7 @@ import { getConfigurationSettings } from '../../storage/configurationData';
 import { getUserRecord } from '../../storage/userData';
 import { ActivePowerUp } from './ActivePowerUp';
 import { PowerUpTable } from './PowerUpTable';
-import { RedeemAwardsBlock } from './RedeemAwardsBlock';
+import { RedeemRewardsBlock } from './RedeemRewardsBlock';
 
 export const MyProfile = (props) => {
     const { context } = props;
@@ -17,8 +17,8 @@ export const MyProfile = (props) => {
             <PowerUpTable userDetails={userDetails} setUserDetails={setUserDetails} currentConfig={currentConfig} context={context}/>
             <Text> </Text>
             <Text> </Text>
-            <Heading size='small'>Awards Redemption</Heading>
-            <RedeemAwardsBlock
+            <Heading size='small'>Rewards Redemption</Heading>
+            <RedeemRewardsBlock
                 userDetails={userDetails}
                 setUserDetails={setUserDetails}
                 currentConfig={currentConfig}

@@ -20,56 +20,56 @@ import ForgeUI, {
     useState,
 } from '@forge/ui';
 import { format } from 'date-fns';
-import { blankAward } from '../../defaults/awardSuggestions';
+import { blankReward } from '../../defaults/rewardSuggestions';
 import {
-    AwardEntry,
-    AwardHistoryRecord,
-    getAwardOption,
-    getNarrowAward,
-    saveAwardOption,
-} from '../../storage/awardData';
+    RewardEntry,
+    RewardHistoryRecord,
+    getRewardOption,
+    getNarrowReward,
+    saveRewardOption,
+} from '../../storage/rewardData';
 
-export const ManageAwardsModal = (props) => {
-    const { awardActions, currentConfig, setCurrentConfig, context, deployingState } = props;
+export const ManageRewardsModal = (props) => {
+    const { rewardActions, currentConfig, setCurrentConfig, context, deployingState } = props;
 
-    const [awardOptionState, setAwardOptionState] = useState(blankAward);
+    const [rewardOptionState, setRewardOptionState] = useState(blankReward);
 
     useEffect(async () => {
-        if (deployingState.award?.id != null) {
-            setAwardOptionState(await getAwardOption(deployingState.award.id, context));
+        if (deployingState.reward?.id != null) {
+            setRewardOptionState(await getRewardOption(deployingState.reward.id, context));
         }
     }, [deployingState]);
 
-    const deployAwardIncrements = async (formData) => {
-        const awardHistoryRecord = {
+    const deployRewardIncrements = async (formData) => {
+        const rewardHistoryRecord = {
             accountId: context.accountId,
-            action: formData.quantityToDeploy > awardOptionState.outstandingAwards ? 'deployed' : 'revoked',
-            difference: formData.quantityToDeploy - awardOptionState.outstandingAwards,
+            action: formData.quantityToDeploy > rewardOptionState.outstandingRewards ? 'deployed' : 'revoked',
+            difference: formData.quantityToDeploy - rewardOptionState.outstandingRewards,
             balance: formData.quantityToDeploy,
             expirationDate: formData.expirationDate,
             locations: formData.availabilityLocations,
             date: new Date().toISOString(),
-        } as AwardHistoryRecord;
+        } as RewardHistoryRecord;
 
-        const updatedAward: AwardEntry = { ...awardOptionState };
+        const updatedReward: RewardEntry = { ...rewardOptionState };
 
-        updatedAward.validUntil = formData.expirationDate;
-        updatedAward.outstandingAwards = formData.quantityToDeploy;
-        updatedAward.availableLocations = formData.availabilityLocations;
+        updatedReward.validUntil = formData.expirationDate;
+        updatedReward.outstandingRewards = formData.quantityToDeploy;
+        updatedReward.availableLocations = formData.availabilityLocations;
 
-        if (Array.isArray(awardOptionState.awardHistory)) {
-            updatedAward.awardHistory.push(awardHistoryRecord);
+        if (Array.isArray(rewardOptionState.rewardHistory)) {
+            updatedReward.rewardHistory.push(rewardHistoryRecord);
         } else {
-            updatedAward.awardHistory = [awardHistoryRecord];
+            updatedReward.rewardHistory = [rewardHistoryRecord];
         }
 
-        await saveAwardOption(awardOptionState.id, { ...updatedAward }, context);
-        const newAwardNarrowEntry = getNarrowAward(awardOptionState.id, updatedAward);
-        awardActions.setDeployingState({ deploying: false, award: newAwardNarrowEntry });
-        deployingState.award = newAwardNarrowEntry;
+        await saveRewardOption(rewardOptionState.id, { ...updatedReward }, context);
+        const newRewardNarrowEntry = getNarrowReward(rewardOptionState.id, updatedReward);
+        rewardActions.setDeployingState({ deploying: false, reward: newRewardNarrowEntry });
+        deployingState.reward = newRewardNarrowEntry;
         setCurrentConfig({
             ...currentConfig,
-            awards: [...currentConfig.awards.filter((a) => a.id !== awardOptionState.id), newAwardNarrowEntry],
+            rewards: [...currentConfig.rewards.filter((a) => a.id !== rewardOptionState.id), newRewardNarrowEntry],
         });
     };
 
@@ -77,27 +77,27 @@ export const ManageAwardsModal = (props) => {
         <Fragment>
             {deployingState.deploying && (
                 <ModalDialog
-                    header="Award Management"
-                    onClose={() => awardActions.setDeployingState({ deploying: false, awardId: null })}
+                    header="Reward Management"
+                    onClose={() => rewardActions.setDeployingState({ deploying: false, rewardId: null })}
                     closeButtonText="Close"
                     width="x-large"
                 >
                     <Tabs>
-                        <Tab label="Deploy Awards">
-                            <Form onSubmit={deployAwardIncrements} submitButtonText="Update Award Availability">
-                                <Text>{`Lets deploy some ${awardOptionState.incrementName} for the Scavengers to find.`}</Text>
+                        <Tab label="Deploy Rewards">
+                            <Form onSubmit={deployRewardIncrements} submitButtonText="Update Reward Availability">
+                                <Text>{`Lets deploy some ${rewardOptionState.incrementName} for the Scavengers to find.`}</Text>
                                 <TextField
                                     name="quantityToDeploy"
-                                    description={`How many ${awardOptionState.incrementName} do you want to deploy?  A user will need to find ${awardOptionState.quantityRequired} of these to earn the ${awardOptionState.name} award.`}
+                                    description={`How many ${rewardOptionState.incrementName} do you want to deploy?  A user will need to find ${rewardOptionState.quantityRequired} of these to earn the ${rewardOptionState.name} reward.`}
                                     label="Quantity to Deploy"
-                                    defaultValue={(awardOptionState.quantityRequired * 3).toString()}
+                                    defaultValue={(rewardOptionState.quantityRequired * 3).toString()}
                                 />
                                 <Text> </Text>
                                 <CheckboxGroup
                                     name="availabilityLocations"
                                     label="Availability Locations"
-                                    description={`The ${awardOptionState.incrementName} will be available on the products selected. To customize which Activities and Creations are
-                            are eligible for a user to earn a award increment on, use the Jira and Confluence settings tabs. \n`}
+                                    description={`The ${rewardOptionState.incrementName} will be available on the products selected. To customize which Activities and Creations are
+                            are eligible for a user to earn a reward increment on, use the Jira and Confluence settings tabs. \n`}
                                 >
                                     <Checkbox label="Jira" defaultChecked={true} value="jira" />
                                     <Checkbox label="Confluence" defaultChecked={true} value="confluence" />
@@ -108,7 +108,7 @@ export const ManageAwardsModal = (props) => {
                                     defaultValue={new Date(
                                         new Date().setFullYear(new Date().getFullYear() + 1)
                                     ).toString()}
-                                    description="How long are these awards valid for?  Set a short date for a Bug Bash and they will be available for a limited time only."
+                                    description="How long are these rewards valid for?  Set a short date for a Bug Bash and they will be available for a limited time only."
                                 />
                             </Form>
                         </Tab>
@@ -134,7 +134,7 @@ export const ManageAwardsModal = (props) => {
                                         <Text>Balance</Text>
                                     </Cell>
                                 </Head>
-                                {awardOptionState.awardHistory?.map((historyRecord) => {
+                                {rewardOptionState.rewardHistory?.map((historyRecord) => {
                                     const actionMessage = `${
                                         historyRecord.action.charAt(0).toUpperCase() + historyRecord.action.slice(1)
                                     } ${Math.abs(historyRecord.difference)} increments`;

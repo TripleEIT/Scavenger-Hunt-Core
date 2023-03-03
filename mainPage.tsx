@@ -40,7 +40,7 @@ const UserHomePage = () => {
             <Heading size="small">What do I Need to Do?</Heading>
             <Text>
                 Nothing! Pretty easy, right? You'll automatically be added to the Leaderboard below when you find your
-                first <Strong>increment</Strong> of an award. You'll be tagged in the comments of the activity when you
+                first <Strong>increment</Strong> of an reward. You'll be tagged in the comments of the activity when you
                 find it, so you'll know when you've earned points.
             </Text>
             <Text> </Text>
@@ -55,7 +55,7 @@ const UserHomePage = () => {
                 <Tab label="My Profile">
                     <Text> </Text>
                     <Heading size="medium">My Profile</Heading>
-                    <Text>Looking to redeem and award or enable a PowerUp? Everything you need is below.</Text>
+                    <Text>Looking to redeem and reward or enable a PowerUp? Everything you need is below.</Text>
                     <MyProfile context={context} />
                 </Tab>
             </Tabs>

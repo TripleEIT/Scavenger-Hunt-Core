@@ -31,7 +31,7 @@ export const RedemptionTable = (props) => {
                         <Text>Redemption Code</Text>
                     </Cell>
                     <Cell>
-                        <Text>Award</Text>
+                        <Text>Reward</Text>
                     </Cell>
                     <Cell>
                         <Text>Date</Text>
@@ -54,7 +54,7 @@ export const RedemptionTable = (props) => {
                                     <Text>{redemption.redemptionCode}</Text>
                                 </Cell>
                                 <Cell>
-                                    <Text>{redemption.awardName}</Text>
+                                    <Text>{redemption.rewardName}</Text>
                                 </Cell>
                                 <Cell>
                                     <Text>{format(new Date(redemption.date), 'dd-MMM-yy p')}</Text>

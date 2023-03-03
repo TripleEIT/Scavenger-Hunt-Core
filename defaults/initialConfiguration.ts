@@ -1,6 +1,6 @@
-import { AwardEntry } from 'src/storage/awardData';
+import { RewardEntry } from 'src/storage/rewardData';
 import { ConfluenceConfiguration, JiraConfiguration } from 'src/storage/configurationData';
-import { defaultAwardSuggestions } from './awardSuggestions';
+import { defaultRewardSuggestions } from './rewardSuggestions';
 
 export const defaultJiraConfiguration: JiraConfiguration = {
     issueCreated: true,
@@ -29,7 +29,7 @@ export const defaultConfluenceConfiguration: ConfluenceConfiguration = {
 };
 
 export const defaultSharedConfiguration = {
-    awards: defaultAwardSuggestions,
+    rewards: defaultRewardSuggestions,
     jiraOptions: defaultJiraConfiguration,
     confluenceOptions: defaultConfluenceConfiguration,
     activeUsers: [],
