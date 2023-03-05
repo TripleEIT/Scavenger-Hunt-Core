@@ -40,7 +40,7 @@ export const RedemptionTable = (props) => {
                         <Text>Actions</Text>
                     </Cell>
                 </Head>
-                {redemptionTable.map((redemption) => {
+                {redemptionTable?.map((redemption) => {
                     return (
                         <Fragment>
                             <Row>

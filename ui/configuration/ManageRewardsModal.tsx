@@ -107,7 +107,7 @@ export const ManageRewardsModal = (props) => {
                                     name="expirationDate"
                                     defaultValue={new Date(
                                         new Date().setFullYear(new Date().getFullYear() + 1)
-                                    ).toString()}
+                                    ).toLocaleDateString('en-CA')}
                                     description="How long are these rewards valid for?  Set a short date for a Bug Bash and they will be available for a limited time only."
                                 />
                             </Form>

@@ -10,7 +10,7 @@ export const EditRewardModal = (props) => {
     const { rewardOptionState, rewardActions } = props;
     const { editing, setEditing, saveReward, deleteReward } = rewardActions;
 
-    const actionButtons = [<Button text='Delete' onClick={deleteReward} appearance='warning' />];
+    const actionButtons = [<Button text='Delete' onClick={deleteReward} appearance='danger' />];
     return (
         <Fragment>
             {editing && (
