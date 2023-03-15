@@ -20,7 +20,6 @@ const SharedSettings = () => {
     }
 
     const [currentConfig, setCurrentConfig] = useState(async () => getConfigurationSettings(context));
-    console.log('currentConfig', currentConfig);
     
 
     const saveSettings = async (newConfig: SharedConfiguration) => {

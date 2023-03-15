@@ -54,7 +54,7 @@ export const getConfigurationSettings = async (context: StandardContext) => {
             settings = defaultSharedConfiguration;
         }
 
-        console.debug('Fetched Configuration settings');
+        console.debug('Fetched Configuration settings', settings);
 
         // If a user that has not previously registered requests the configuration, register them
         const activeUser = settings.activeUsers.find((user) => user?.accountId == context.accountId);
@@ -73,9 +73,10 @@ export const getConfigurationSettings = async (context: StandardContext) => {
 export const setConfigurationSettings = async (settings: SharedConfiguration, context: StandardContext) => {
     try {
         configurationSettings = settings;
+        console.debug('Saving Configuration settings', settings);
         const saveResult = await setDistributedData(configurationSettingsKey, settings, context.product);
         if (saveResult.successful == false) {
-            console.error('Error saving configuration settings', saveResult);
+            console.error('Unsuccessful in saving configuration settings', saveResult);
         }
     } catch (error) {
         console.error('Error saving configuration settings', error);

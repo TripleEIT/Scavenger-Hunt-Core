@@ -86,6 +86,7 @@ export const getRewardOption = async (rewardId, context: StandardContext) => {
                 return null;
             }
         }
+        console.debug(`Fetched reward settings for ${rewardId}`, rewardSettings);
         return rewardSettings as RewardEntry;
     } catch (error) {
         console.error(`Error getting reward settings for ${rewardId}`, error);
@@ -104,7 +105,7 @@ export const deleteRewardOption = async (rewardId: string, context: StandardCont
 export const saveRewardOption = async (rewardId: string, rewardOption: RewardEntry, context: StandardContext) => {
     try {
         await setDistributedData(`${rewardPrefix}.${rewardId}`, rewardOption, context.product);
-        console.debug(`Reward settings saved for ${rewardId}`);
+        console.debug(`Reward settings saved for ${rewardId}`, rewardOption);
     } catch (error) {
         console.error(`Error saving reward settings for ${rewardId}`, error);
     }
@@ -131,6 +132,7 @@ export const getActiveProductRewards = async (product, context: StandardContext,
         }
     }
 
+    console.debug(`Active rewards for ${product}`, activeRewards);
     return activeRewards;
 };
 
@@ -145,6 +147,7 @@ export const recordRewardRedemption = async (reward, userRecord) => {
         date: new Date().toISOString()
     };
 
+    console.debug(`Reward redemption recorded`, redemptionRecord);
     return redemptionRecord;
 };
 
@@ -171,8 +174,10 @@ export const recordRewardedIncrementWon = async (standardEvent, rewardWon, conte
         const narrowUser = getNarrowUserRecord(updatedUser);
 
         configuration.rewards = [...configuration.rewards.filter((reward) => reward.id !== rewardWon.id), narrowReward];
+        console.debug(`Updated rewards for ${standardEvent.accountId}`, narrowReward);
 
         configuration.activeUsers = [...configuration.activeUsers.filter((user) => user.accountId !== narrowUser.accountId), narrowUser];
+        console.debug(`Updated users for ${standardEvent.accountId}`, narrowUser);
 
         let promises = [];
         promises.push(setConfigurationSettings(configuration, context));

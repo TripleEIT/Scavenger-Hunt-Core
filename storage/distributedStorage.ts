@@ -57,7 +57,7 @@ export const setDistributedData = async (key: string, value: any, currentProduct
 
     // if we don't have another endpoint, then we can't store the data
     if (nonSelfEndpoint == null) {
-        console.error('No non-self endpoint found, unable to save remote data');
+        console.warn('No non-self endpoint found, unable to save remote data');
         return { successful: false };
     }
 

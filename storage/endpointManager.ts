@@ -46,6 +46,8 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
     }
 
     await storage.set(endpointStorageKey, storageKnownEndpoints);
+    
+    console.debug('Updated known endpoints', storageKnownEndpoints);
     return storageKnownEndpoints;
 };
 

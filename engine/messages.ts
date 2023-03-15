@@ -21,7 +21,7 @@ export const commentOnIssue = async (standardEvent, rewardWon, context) => {
         }
     };
 
-    //console.debug(`Commenting on issue ${standardEvent.event.issue.key}:`, JSON.stringify(comment, null, 2));
+    console.debug(`Commenting on issue ${standardEvent.event.issue.key}:`, JSON.stringify(comment, null, 2));
 
     const response = await api.asApp().requestJira(route`/rest/api/3/issue/${standardEvent.event.issue.key}/comment`, {
         method: 'POST',
