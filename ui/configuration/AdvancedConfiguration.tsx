@@ -46,12 +46,12 @@ export const AdvancedConfiguration = (props) => {
             >
                 {context.product === 'jira' && (
                     <Fragment>
-                        <Heading size="medium">{'Confluence <-> Jira Connection'}</Heading>
+                        <Heading size="medium">{'Jira <-> Confluence Connection'}</Heading>
                         <Text>
                             The below endpoint is secure and unique to your installation, paste this in the Jira App's administration and
                             save the endpoint to share scores and configuration.
                         </Text>
-                        <Heading size="small">Confluence Endpoint</Heading>
+                        <Heading size="small">Jira Endpoint</Heading>
                         <Text>
                             <Em>{storageEndpoints.jiraFetchUrl}</Em>
                         </Text>
