@@ -8,7 +8,8 @@ import { getStandardContext, StandardContext } from './utils';
 // it must be used whenever calling the webhooks
 export const storageKey = 'unique-storage-key';
 export const storeReceivedData = async (request, context) => {
-    const endpointRequest = getEndpointRequest(request, context, 'storeReceivedData');
+    const standardContext = getStandardContext(context, 'webhook');
+    const endpointRequest = getEndpointRequest(request, standardContext, 'storeReceivedData');
     if (!endpointRequest) {
         return null;
     }
@@ -84,7 +85,7 @@ export const fetchKnownEndpoints = async (request, context) => {
     }
 
     const knownEndpoints = await getKnownEndpoints(endpointRequest.product);
-    console.debug('found knownEndpoints', knownEndpoints);
+    console.debug('found knownEndpoints', knownEndpoints);        
     return buildResponse(knownEndpoints);
 };
 
@@ -108,6 +109,8 @@ const getEndpointRequest = (request, context: StandardContext, name) => {
     const body = getRequestBody(request);
     const product = context.product;
     if (!body || !product) {
+        console.debug('request', request);
+        console.debug('context', context)
         console.error(`Invalid request body or product, ${name} failed`);
         return null;
     }
