@@ -59,6 +59,7 @@ export const getConfigurationSettings = async (context: StandardContext) => {
         // If a user that has not previously registered requests the configuration, register them
         const activeUser = settings.activeUsers.find((user) => user?.accountId == context.accountId);
         if (!activeUser && context.caller == 'user') {
+            console.debug('Adding user to active users', context.accountId);
             settings.activeUsers.push(await getUserRecord(context.accountId, context));
             await setConfigurationSettings(settings, context);
         }

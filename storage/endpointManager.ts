@@ -78,7 +78,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
         return storageKnownEndpoints;
     }
 
-    storageKnownEndpoints = (await getDistributedData(endpointStorageKey, currentProduct)) as KnownEndpoints;
+    storageKnownEndpoints = (await storage.get(endpointStorageKey)) as KnownEndpoints;
 
     if (storageKnownEndpoints == null) {
         storageUpdates = true;
@@ -109,7 +109,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
     }
 
     if (storageUpdates) {
-        await setDistributedData(endpointStorageKey, storageKnownEndpoints, currentProduct);
+        await storage.set(endpointStorageKey, storageKnownEndpoints);
     }
 
     return storageKnownEndpoints;
