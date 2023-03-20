@@ -29,14 +29,14 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
     };
 
     const localEndpointPromise = generateEndpoints();
-    const remoteEndpointPromise = getRemoteEndpoints(remoteEndpointFetchUrl);
+    const remoteEndpointPromise = getRemoteKnownEndpoints(remoteEndpointFetchUrl);
     const localEndPointUrlPromise = webTrigger.getUrl('scavenger-hunt-fetch-endpoints');
 
     // Removed the null check as we will update each run
     if (currentProduct === 'confluence') {
         console.info('Confluence user endpoints are null, but we are in confluence, generating and returning endpoints');
         storageKnownEndpoints.confluence = await localEndpointPromise;
-        storageKnownEndpoints.jira = await remoteEndpointPromise;
+        storageKnownEndpoints.jira = (await remoteEndpointPromise).jira;
         storageKnownEndpoints.confluenceFetchUrl = await localEndPointUrlPromise;
         storageKnownEndpoints.jiraFetchUrl = remoteEndpointFetchUrl;
     }
@@ -44,7 +44,7 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
     if (currentProduct === 'jira') {
         console.info('Jira user endpoints are null, but we are in jira, generating and returning endpoints');
         storageKnownEndpoints.jira = await localEndpointPromise;
-        storageKnownEndpoints.confluence = await remoteEndpointPromise;
+        storageKnownEndpoints.confluence = (await remoteEndpointPromise).confluence;
         storageKnownEndpoints.jiraFetchUrl = await localEndPointUrlPromise;
         storageKnownEndpoints.confluenceFetchUrl = remoteEndpointFetchUrl;
     }
@@ -54,7 +54,7 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
     return storageKnownEndpoints;
 };
 
-const getRemoteEndpoints = async (remoteEndpointFetchUrl) => {
+const getRemoteKnownEndpoints = async (remoteEndpointFetchUrl) => {
     const storageRequest = {
         method: 'POST',
         body: JSON.stringify({"empty": "true"}),
@@ -66,7 +66,9 @@ const getRemoteEndpoints = async (remoteEndpointFetchUrl) => {
     };
 
     const storageResponse = await fetch(remoteEndpointFetchUrl, storageRequest);
-    return (await storageResponse.json()) as StorageEndpoints;
+    const remoteKnownEndpoints = (await storageResponse.json()) as KnownEndpoints;
+    console.debug('Got remote known endpoints', remoteKnownEndpoints);
+    return remoteKnownEndpoints;
 };
 
 export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') => {

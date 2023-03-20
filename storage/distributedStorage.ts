@@ -32,15 +32,21 @@ export const getDistributedData = async (key: string, currentProduct: string) =>
         body: `{ "key" : "${key}" }`
     };
 
-    const storageResponse = await fetch(nonSelfEndpoint.fetchData, storageRequest);
-    const storageData = await storageResponse.json();
+    try {
+        const storageResponse = await fetch(nonSelfEndpoint.fetchData, storageRequest);
+        const storageData = await storageResponse.json();
 
-    if (storageData.empty) {
+        if (storageData.empty) {
+            return null;
+        } else {
+            // store the data locally for faster access next time
+            await storage.set(key, storageData.value);
+            return storageData.value;
+        }
+    } catch (error) {
+        // A failure to fetch remote data should not prevent the user from using the app
+        console.warn(`Failed to fetch remote data with a nonSelfEndpoint, item ${key}`, error);
         return null;
-    } else {
-        // store the data locally for faster access next time
-        await storage.set(key, storageData.value);
-        return storageData.value;
     }
 };
 
@@ -74,9 +80,15 @@ export const setDistributedData = async (key: string, value: any, currentProduct
         body: JSON.stringify(bodyPayload)
     };
 
-    const storageResponse = await fetch(nonSelfEndpoint.storeData, storageRequest);
-    await storagePromise;
-    return await storageResponse.json();
+    try {
+        const storageResponse = await fetch(nonSelfEndpoint.storeData, storageRequest);
+        await storagePromise;
+        return await storageResponse.json();
+    } catch (error) {
+        // A failure to store remote data should not prevent the user from using the app
+        console.warn(`Failed to store remote data with a nonSelfEndpoint, item ${key}`, error);
+        await storagePromise;
+    }
 };
 
 export const deleteDistributedData = async (key: string, currentProduct: string) => {
@@ -107,7 +119,13 @@ export const deleteDistributedData = async (key: string, currentProduct: string)
         body: JSON.stringify(bodyPayload)
     };
 
-    const storageResponse = await fetch(nonSelfEndpoint.deleteData, storageRequest);
-    await storagePromise;
-    return await storageResponse.json();
+    try {
+        const storageResponse = await fetch(nonSelfEndpoint.deleteData, storageRequest);
+        await storagePromise;
+        return await storageResponse.json();
+    } catch (error) {
+        // A failure to delete remote data should not prevent the user from using the app
+        console.warn(`Failed to delete remote data with a nonSelfEndpoint, item ${key}`, error);
+        await storagePromise;
+    }
 };
