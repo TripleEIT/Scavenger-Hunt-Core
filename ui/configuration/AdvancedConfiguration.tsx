@@ -5,6 +5,7 @@ import { SharedConfiguration } from '../../storage/configurationData';
 import { deleteDistributedData } from '../../storage/distributedStorage';
 import { createOrUpdateRemoteEndpoints, getKnownEndpoints, KnownEndpoints } from '../../storage/endpointManager';
 import { StandardContext } from '../../utils';
+import { ConfirmationButton } from '../ConfirmationButton';
 
 export const AdvancedConfiguration = (props) => {
     const currentConfig: SharedConfiguration = props.currentConfig;
@@ -76,7 +77,7 @@ export const AdvancedConfiguration = (props) => {
             <Text> </Text>
             <Text> </Text>
             <Heading size="medium">Reset Scavenger Hunt configuration to default</Heading>
-            <Button text="Reset Configuration" onClick={resetSettings} appearance="danger" />
+            <ConfirmationButton text="Reset Configuration" onClick={resetSettings} appearance="danger" />
         </Fragment>
     );
 };

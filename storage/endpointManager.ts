@@ -1,7 +1,13 @@
 import { fetch, storage, webTrigger } from '@forge/api';
 import { storageKey } from '../storageWebtrigger';
+import { setDistributedData } from './distributedStorage';
 
-let storageKnownEndpoints: KnownEndpoints = null;
+let storageKnownEndpoints: KnownEndpoints = {
+            jiraFetchUrl: null,
+            confluenceFetchUrl: null,
+            jira: null,
+            confluence: null
+        };
 
 export interface KnownEndpoints {
     jiraFetchUrl: string;
@@ -41,8 +47,7 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
         storageKnownEndpoints.confluenceFetchUrl = remoteEndpointFetchUrl;
     }
 
-    await storage.set(endpointStorageKey, storageKnownEndpoints);
-
+    await setDistributedData(endpointStorageKey, storageKnownEndpoints, currentProduct);
     console.debug('Updated known endpoints', storageKnownEndpoints);
     return storageKnownEndpoints;
 };
