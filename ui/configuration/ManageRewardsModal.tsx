@@ -67,7 +67,7 @@ export const ManageRewardsModal = (props) => {
         const newRewardNarrowEntry = getNarrowReward(rewardOptionState.id, updatedReward);
         rewardActions.setDeployingState({ deploying: false, reward: newRewardNarrowEntry });
         deployingState.reward = newRewardNarrowEntry;
-        setCurrentConfig({
+        await setCurrentConfig({
             ...currentConfig,
             rewards: [...currentConfig.rewards.filter((a) => a.id !== rewardOptionState.id), newRewardNarrowEntry],
         });

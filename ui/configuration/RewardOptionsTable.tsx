@@ -1,4 +1,4 @@
-import ForgeUI, { Fragment, Text, Button, Table, Head, Cell, Heading, useState, useEffect } from '@forge/ui';
+import ForgeUI, { Fragment, Text, Button, Table, Head, Cell, Heading, useState, useEffect, SectionMessage, Strong } from '@forge/ui';
 import { getNewGenericReward } from '../../defaults/rewardSuggestions';
 import { deleteRewardOption, getRewardOption, getNarrowReward, saveRewardOption } from '../../storage/rewardData';
 import { generateRandomString } from '../../utils';
@@ -17,10 +17,26 @@ export const RewardOptionsTable = (props) => {
         await Promise.all([setConfigPromise, deleteRewardPromise]);
     };
 
+    // Sums the number of all outstanding enabled rewards
+    const getOutstandingRewards = () => {
+        return rewards.reduce((total, reward) => {
+            if (reward.enabled) {
+                return total + reward.outstandingRewards;
+            }
+            return total;
+        }, 0);
+    };
+    const [outstandingRewards, setOutstandingRewards] = useState(getOutstandingRewards());
+
     useEffect(async () => {
         console.debug('Updating reward rows');
         setRewards(currentConfig.rewards);
     }, [currentConfig]);
+
+    useEffect(async () => {
+        console.debug('Updating outstanding rewards');
+        setOutstandingRewards(getOutstandingRewards());
+    }, [rewards]);
 
     const cloneReward = async (rewardId) => {
         const rewardOptionState = await getRewardOption(rewardId, context);
@@ -46,21 +62,31 @@ export const RewardOptionsTable = (props) => {
 
     return (
         <Fragment>
+            {outstandingRewards == 0 && (
+                <Fragment>
+                    <SectionMessage title="You have no rewards configured. Let's fix that!" appearance="warning">
+                        <Text>You have no outstanding rewards. You can configure rewards in the table below.</Text>
+                        <Text>
+                            Users will be unable to receive any rewards (or reward increments) until you make some available through the{' '}
+                            <Strong>Manage</Strong> button below.
+                        </Text>
+                    </SectionMessage>
+                </Fragment>
+            )}
             <Text>
                 Configure the reward options for your teams. These rewards are synced between all Atlassian products which have the
                 Scavenger Hunt installed.
             </Text>
-            <Heading size='small'>Editing Rewards:</Heading>
+            <Heading size="small">Editing Rewards:</Heading>
             <Text>
                 Click the reward name or the Edit button to make changes to every aspect of the reward. We've tossed in some sensible
-                defaults but but everything from the notification messages to the emojis can be customized to maximize user's
-                engagement.
+                defaults but but everything from the notification messages to the emojis can be customized to maximize user's engagement.
             </Text>
-            <Heading size='small'>Managing and Deploying Rewards:</Heading>
+            <Heading size="small">Managing and Deploying Rewards:</Heading>
             <Text>
-                This is where the fun really happens! Used the Manage Rewards button to hide incremental pieces of the reward throughout
-                the Atlassian platform. As users perform their day to day work they will get the occasional surprise and a bit of proof
-                you really do love your employees (I'm sure they know that already).
+                This is where the fun really happens! Used the Manage Rewards button to hide incremental pieces of the reward throughout the
+                Atlassian platform. As users perform their day to day work they will get the occasional surprise and a bit of proof you
+                really do love your employees (I'm sure they know that already).
             </Text>
             <Table>
                 <Head>
@@ -78,20 +104,20 @@ export const RewardOptionsTable = (props) => {
                     </Cell>
                 </Head>
                 {rewards?.map((reward) => {
-                        return (
-                            <RewardOptionRow
-                                reward={reward}
-                                rewardList={rewards}
-                                context={context}
-                                rewardActions={universalRewardActions}
-                                currentConfig={currentConfig}
-                                setCurrentConfig={setCurrentConfig}
-                                deployingState={deployingState}
-                            />
-                        );
-                    })}
+                    return (
+                        <RewardOptionRow
+                            reward={reward}
+                            rewardList={rewards}
+                            context={context}
+                            rewardActions={universalRewardActions}
+                            currentConfig={currentConfig}
+                            setCurrentConfig={setCurrentConfig}
+                            deployingState={deployingState}
+                        />
+                    );
+                })}
             </Table>
-            <Button text='Create New Reward' onClick={createReward} />
+            <Button text="Create New Reward" onClick={createReward} />
             {/* This is a very odd pattern at the moment, but the table in the ManageRewardsModal can't be within the above table */}
             <ManageRewardsModal
                 currentConfig={currentConfig}

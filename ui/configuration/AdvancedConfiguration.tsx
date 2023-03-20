@@ -1,5 +1,5 @@
 import { storage } from '@forge/api';
-import ForgeUI, { Button, Em, Form, Fragment, Heading, Strong, Text, TextField, useState } from '@forge/ui';
+import ForgeUI, { Button, Em, Form, Fragment, Heading, SectionMessage, Strong, Text, TextField, useState } from '@forge/ui';
 import { defaultSharedConfiguration } from '../../defaults/initialConfiguration';
 import { SharedConfiguration } from '../../storage/configurationData';
 import { deleteDistributedData } from '../../storage/distributedStorage';
@@ -45,12 +45,21 @@ export const AdvancedConfiguration = (props) => {
                 submitButtonAppearance="primary"
                 submitButtonText={context.product === 'jira' ? 'Set Confluence Endpoint' : 'Set Jira Endpoint'}
             >
+                {storageEndpoints.jiraFetchUrl != null && storageEndpoints.confluenceFetchUrl != null && (
+                    <Fragment>
+                        <SectionMessage title="Endpoints successfully set" appearance="info">
+                            <Text><Strong>Congratulations!</Strong></Text>
+                            <Text>Both endpoints have been set, you can now share scores and configuration between the two products.</Text>
+                        </SectionMessage>
+                    </Fragment>
+                )}
+
                 {context.product === 'jira' && (
                     <Fragment>
                         <Heading size="medium">{'Jira <-> Confluence Connection'}</Heading>
                         <Text>
-                            The below endpoint is secure and unique to your installation, paste this in the Jira App's administration and
-                            save the endpoint to share scores and configuration.
+                            The below endpoint is secure and unique to your installation, paste this in the Confluence App's administration
+                            and save the endpoint to share scores and configuration.
                         </Text>
                         <Heading size="small">Jira Endpoint</Heading>
                         <Text>
