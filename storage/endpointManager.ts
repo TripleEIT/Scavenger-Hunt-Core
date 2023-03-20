@@ -1,6 +1,6 @@
 import { fetch, storage, webTrigger } from '@forge/api';
 import { storageKey } from '../storageWebtrigger';
-import { setDistributedData } from './distributedStorage';
+import { getDistributedData, setDistributedData } from './distributedStorage';
 
 let storageKnownEndpoints: KnownEndpoints = null;
 
@@ -78,7 +78,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
         return storageKnownEndpoints;
     }
 
-    storageKnownEndpoints = (await storage.get(endpointStorageKey)) as KnownEndpoints;
+    storageKnownEndpoints = (await getDistributedData(endpointStorageKey, currentProduct)) as KnownEndpoints;
 
     if (storageKnownEndpoints == null) {
         storageUpdates = true;
@@ -109,7 +109,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
     }
 
     if (storageUpdates) {
-        await storage.set(endpointStorageKey, storageKnownEndpoints);
+        await setDistributedData(endpointStorageKey, storageKnownEndpoints, currentProduct);
     }
 
     return storageKnownEndpoints;
