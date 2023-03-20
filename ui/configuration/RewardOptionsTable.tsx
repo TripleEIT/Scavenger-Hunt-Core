@@ -12,12 +12,13 @@ export const RewardOptionsTable = (props) => {
 
     const deleteReward = async (rewardId) => {
         const newRewards = currentConfig.rewards.filter((reward) => reward.id !== rewardId);
-        await setCurrentConfig({ ...currentConfig, rewards: newRewards });
-        await deleteRewardOption(rewardId, context);
+        const setConfigPromise = setCurrentConfig({ ...currentConfig, rewards: newRewards });
+        const deleteRewardPromise = deleteRewardOption(rewardId, context);
+        await Promise.all([setConfigPromise, deleteRewardPromise]);
     };
 
     useEffect(async () => {
-        console.debug('Updating rewards');
+        console.debug('Updating reward rows');
         setRewards(currentConfig.rewards);
     }, [currentConfig]);
 

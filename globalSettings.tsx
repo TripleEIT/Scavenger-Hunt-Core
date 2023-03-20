@@ -37,6 +37,7 @@ const SharedSettings = () => {
             return 0;
         });
         await setConfigurationSettings(newConfig, context);
+        console.debug('saved a new config via the settings page',newConfig);
         setCurrentConfig(newConfig);
     };
 

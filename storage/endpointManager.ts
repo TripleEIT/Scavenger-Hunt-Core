@@ -1,5 +1,7 @@
-import { storage, webTrigger } from '@forge/api';
+import { fetch, storage, webTrigger } from '@forge/api';
 import { storageKey } from '../storageWebtrigger';
+
+let storageKnownEndpoints: KnownEndpoints = null;
 
 export interface KnownEndpoints {
     jiraFetchUrl: string;
@@ -17,13 +19,7 @@ export interface StorageEndpoints {
 const endpointStorageKey = 'knownEndpoints';
 
 export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'confluence', remoteEndpointFetchUrl) => {
-    let storageKnownEndpoints = {
-        jiraFetchUrl: null,
-        confluenceFetchUrl: null,
-        jira: null,
-        confluence: null
-    };
-
+    
     const localEndpointPromise = generateEndpoints();
     const remoteEndpointPromise = getRemoteEndpoints(remoteEndpointFetchUrl);
     const localEndPointUrlPromise = webTrigger.getUrl('scavenger-hunt-fetch-endpoints');
@@ -46,7 +42,7 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
     }
 
     await storage.set(endpointStorageKey, storageKnownEndpoints);
-    
+
     console.debug('Updated known endpoints', storageKnownEndpoints);
     return storageKnownEndpoints;
 };
@@ -66,9 +62,17 @@ const getRemoteEndpoints = async (remoteEndpointFetchUrl) => {
 };
 
 export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') => {
-    let storageKnownEndpoints = (await storage.get(endpointStorageKey)) as KnownEndpoints;
+    let storageUpdates: boolean = false;
+    if (storageKnownEndpoints != null) {
+        console.log('Using cached known endpoints');
+        return storageKnownEndpoints;
+    }
+
+    storageKnownEndpoints = (await storage.get(endpointStorageKey)) as KnownEndpoints;
 
     if (storageKnownEndpoints == null) {
+        storageUpdates = true;
+        console.debug('No known endpoints found, creating new ones');
         storageKnownEndpoints = {
             jiraFetchUrl: null,
             confluenceFetchUrl: null,
@@ -79,6 +83,7 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
 
     // These should only be needed on the first run.
     if (storageKnownEndpoints.confluenceFetchUrl == null && currentProduct === 'confluence') {
+        storageUpdates = true;
         console.info('Confluence fetch url is null, but we are in confluence, generating and returning endpoints');
         const endpointPromise = generateEndpoints();
         storageKnownEndpoints.confluenceFetchUrl = await webTrigger.getUrl('scavenger-hunt-fetch-endpoints');
@@ -86,13 +91,17 @@ export const getKnownEndpoints = async (currentProduct: 'jira' | 'confluence') =
     }
 
     if (storageKnownEndpoints.jiraFetchUrl == null && currentProduct === 'jira') {
+        storageUpdates = true;
         console.info('Jira fetch url is null, but we are in jira, generating and returning endpoints');
         const endpointPromise = generateEndpoints();
         storageKnownEndpoints.jiraFetchUrl = await webTrigger.getUrl('scavenger-hunt-fetch-endpoints');
         storageKnownEndpoints.jira = await endpointPromise;
     }
 
-    await storage.set(endpointStorageKey, storageKnownEndpoints);
+    if (storageUpdates) {
+        await storage.set(endpointStorageKey, storageKnownEndpoints);
+    }
+
     return storageKnownEndpoints;
 };
 

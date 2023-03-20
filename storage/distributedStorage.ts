@@ -14,10 +14,7 @@ export const getDistributedData = async (key: string, currentProduct: string) =>
     }
 
     if (!nonSelfEndpoint) {
-        console.debug('Getting non-self endpoint');
         nonSelfEndpoint = await getNonSelfStorageEndpoint(currentProduct);
-    } else {
-        console.debug('Using cached non-self endpoint');
     }
 
     // if we don't have another endpoint, then we can't find the data
@@ -58,6 +55,7 @@ export const setDistributedData = async (key: string, value: any, currentProduct
     // if we don't have another endpoint, then we can't store the data
     if (nonSelfEndpoint == null) {
         console.warn('No non-self endpoint found, unable to save remote data');
+        await storagePromise;
         return { successful: false };
     }
 
@@ -91,6 +89,7 @@ export const deleteDistributedData = async (key: string, currentProduct: string)
 
     // if we don't have another endpoint, then we can't delete the data
     if (nonSelfEndpoint == null) {
+        await storagePromise;
         return;
     }
 

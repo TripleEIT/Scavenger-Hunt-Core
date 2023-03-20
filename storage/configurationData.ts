@@ -74,10 +74,7 @@ export const setConfigurationSettings = async (settings: SharedConfiguration, co
     try {
         configurationSettings = settings;
         console.debug('Saving Configuration settings', settings);
-        const saveResult = await setDistributedData(configurationSettingsKey, settings, context.product);
-        if (saveResult.successful == false) {
-            console.error('Unsuccessful in saving configuration settings', saveResult);
-        }
+        await setDistributedData(configurationSettingsKey, settings, context.product);
     } catch (error) {
         console.error('Error saving configuration settings', error);
     }

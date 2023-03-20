@@ -1,6 +1,8 @@
 import ForgeUI, { Text, ButtonSet, useState, Button, Row, Cell, useEffect, Fragment } from '@forge/ui';
 import { EditRewardModal } from './EditRewardModal';
 import { RewardEntry, getRewardOption, getNarrowReward, replaceUndefinedRewardValues, saveRewardOption } from '../../storage/rewardData';
+import { AdvancedRewardModal } from './AdvancedRewardModal';
+import { ConfirmationButton } from '../ConfirmationButton';
 
 export const RewardOptionRow = (props) => {
     const { reward, context, currentConfig, setCurrentConfig, deployingState } = props;
@@ -8,6 +10,7 @@ export const RewardOptionRow = (props) => {
 
     const [rewardOptionState, setRewardOptionState] = useState(reward);
     const [editing, setEditing] = useState(false);
+    const [advancedEditing, setAdvancedEditing] = useState(false);
 
     //Redraw when the reward changes
     useEffect(async () => {
@@ -26,11 +29,12 @@ export const RewardOptionRow = (props) => {
     };
 
     const performSave = async (formData) => {
-        const newRewardOptionState : RewardEntry = replaceUndefinedRewardValues(formData, rewardOptionState);
+        const newRewardOptionState: RewardEntry = replaceUndefinedRewardValues(formData, rewardOptionState);
         console.debug('Saving reward option', newRewardOptionState);
         setRewardOptionState(newRewardOptionState);
         await saveRewardOption(rewardId, newRewardOptionState, context);
         setEditing(false);
+        setAdvancedEditing(false);
         const newRewardNarrowEntry = getNarrowReward(rewardId, newRewardOptionState);
         await setCurrentConfig({
             ...currentConfig,
@@ -40,8 +44,9 @@ export const RewardOptionRow = (props) => {
 
     const performDelete = async () => {
         console.debug('Deleting reward option', rewardId);
-        await props.rewardActions.deleteReward(rewardId);
         setEditing(false);
+        setAdvancedEditing(false);
+        await props.rewardActions.deleteReward(rewardId);
     };
 
     const performEnable = async (rewardId, enabled) => {
@@ -59,7 +64,9 @@ export const RewardOptionRow = (props) => {
     const rewardActions = {
         ...props.rewardActions,
         editing: editing,
+        advancedEditing: advancedEditing,
         setEditing: setEditing,
+        setAdvancedEditing: setAdvancedEditing,
         saveReward: performSave,
         deleteReward: performDelete
     };
@@ -72,8 +79,11 @@ export const RewardOptionRow = (props) => {
     return (
         <Row>
             <Cell>
-                <Button text={rewardOptionState?.name} onClick={() => rewardActions.setDeployingState({ deploying: true, reward: reward })} appearance='link' />
-                <EditRewardModal rewardOptionState={rewardOptionState} rewardActions={rewardActions} />
+                <Button
+                    text={rewardOptionState?.name}
+                    onClick={() => rewardActions.setDeployingState({ deploying: true, reward: reward })}
+                    appearance="link"
+                />
             </Cell>
             <Cell>
                 <Text>{rewardOptionState?.enabled ? 'Active' : 'Disabled'}</Text>
@@ -84,40 +94,41 @@ export const RewardOptionRow = (props) => {
                 </Text>
             </Cell>
             <Cell>
+                <EditRewardModal rewardOptionState={rewardOptionState} rewardActions={rewardActions} />
+                <AdvancedRewardModal rewardOptionState={rewardOptionState} rewardActions={rewardActions} />
                 <ButtonSet>
                     {(() => {
                         if (rewardOptionState.enabled) {
                             return (
                                 <Fragment>
                                     <Button
-                                        text='Manage Rewards'
+                                        text="Manage"
                                         onClick={() => rewardActions.setDeployingState({ deploying: true, reward: reward })}
-                                        appearance='primary'
+                                        appearance="primary"
                                     />
                                 </Fragment>
                             );
                         }
                     })()}
-                    <Button text='Edit' onClick={performEditing} />
-                    <Button text='Clone' onClick={() => rewardActions.cloneReward(rewardId)} />
+                    <Button text="Edit" onClick={performEditing} />
+                    <Button text="Clone" onClick={() => rewardActions.cloneReward(rewardId)} />
                     {(() => {
                         if (rewardOptionState.enabled) {
                             return (
                                 <Fragment>
-                                    <Button text='Disable' onClick={() => performEnable(rewardId, false)} appearance='warning' />
+                                    <Button text="Disable" onClick={() => performEnable(rewardId, false)} appearance="warning" />
                                 </Fragment>
                             );
                         } else {
                             return (
                                 <Fragment>
-                                    <Button text='Enable' onClick={() => performEnable(rewardId, true)} appearance='default' />
-                                    <Button text='Delete' onClick={performDelete} appearance='danger' />
+                                    <Button text="Enable" onClick={() => performEnable(rewardId, true)} appearance="default" />
+                                    <ConfirmationButton text="Delete" onClick={performDelete} />
                                 </Fragment>
                             );
                         }
                     })()}
                 </ButtonSet>
-                {/* <ManageRewardsModal rewardOptionState={rewardOptionState} rewardActions={rewardActions} context={context}/> */}
             </Cell>
         </Row>
     );
