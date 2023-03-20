@@ -2,12 +2,7 @@ import { fetch, storage, webTrigger } from '@forge/api';
 import { storageKey } from '../storageWebtrigger';
 import { setDistributedData } from './distributedStorage';
 
-let storageKnownEndpoints: KnownEndpoints = {
-            jiraFetchUrl: null,
-            confluenceFetchUrl: null,
-            jira: null,
-            confluence: null
-        };
+let storageKnownEndpoints: KnownEndpoints = null;
 
 export interface KnownEndpoints {
     jiraFetchUrl: string;
@@ -25,7 +20,14 @@ export interface StorageEndpoints {
 const endpointStorageKey = 'knownEndpoints';
 
 export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'confluence', remoteEndpointFetchUrl) => {
-    
+    console.debug('Creating or updating remote endpoints');
+    storageKnownEndpoints = {
+        jiraFetchUrl: null,
+        confluenceFetchUrl: null,
+        jira: null,
+        confluence: null
+    };
+
     const localEndpointPromise = generateEndpoints();
     const remoteEndpointPromise = getRemoteEndpoints(remoteEndpointFetchUrl);
     const localEndPointUrlPromise = webTrigger.getUrl('scavenger-hunt-fetch-endpoints');
@@ -55,6 +57,7 @@ export const createOrUpdateRemoteEndpoints = async (currentProduct: 'jira' | 'co
 const getRemoteEndpoints = async (remoteEndpointFetchUrl) => {
     const storageRequest = {
         method: 'POST',
+        body: JSON.stringify({"empty": "true"}),
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
