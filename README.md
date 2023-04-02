@@ -4,6 +4,10 @@
  The content was created for the [2023 Devs Unleashed Hackathon](https://devpost.com/software/atlassian-scavenger-hunt)
 [See it on YouTube](https://youtu.be/GaE_KIgOSKU)
 
+## Using the source code
+Tips on using the source code can be found [here](https://tripleeit.com/scavenger-hunt-source-code/)
+
+
 ## Core Licensing
 This project is Open Source under the GPL-3 license, which means that it can be used for anything. However, there is no warranty or support provided.
 
