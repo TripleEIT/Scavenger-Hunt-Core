@@ -62,12 +62,12 @@ export const RewardOptionsTable = (props) => {
 
     return (
         <Fragment>
-            {outstandingRewards == 0 && (
+            {outstandingRewards < 10 && (
                 <Fragment>
-                    <SectionMessage title="You have no rewards configured. Let's fix that!" appearance="warning">
-                        <Text>You have no outstanding rewards. You can configure rewards in the table below.</Text>
+                    <SectionMessage title={`You have ${outstandingRewards} rewards configured. Let's fix that!`} appearance="warning">
+                        <Text>You have limited outstanding rewards. You can configure rewards in the table below.</Text>
                         <Text>
-                            Users will be unable to receive any rewards (or reward increments) until you make some available through the{' '}
+                            Users will be unable to receive any rewards (or reward increments) if none are available.  You make some available through the{' '}
                             <Strong>Manage</Strong> button below.
                         </Text>
                     </SectionMessage>

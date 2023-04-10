@@ -55,7 +55,7 @@ export const defaultRewardSuggestions: RewardEntry[] = [
         description: 'Start your day off right with a breakfast treat!',
         incrementName: 'donut(s)',
         quantityRequired: 5,
-        outstandingRewards: 0,
+        outstandingRewards: 20,
         enabled: true,
         icon: ':doughnut:'
     },
@@ -65,7 +65,7 @@ export const defaultRewardSuggestions: RewardEntry[] = [
         description: 'Grab a coffee or energy drink to keep you going, our gift to you!',
         incrementName: 'bean(s)',
         quantityRequired: 5,
-        outstandingRewards: 0,
+        outstandingRewards: 20,
         enabled: true,
         icon: ':coffee:'
     },
@@ -75,7 +75,7 @@ export const defaultRewardSuggestions: RewardEntry[] = [
         description: "A pizza party for the whole team!  We'll even throw in some extra slices for the next day!",
         incrementName: 'slice(s)',
         quantityRequired: 10,
-        outstandingRewards: 0,
+        outstandingRewards: 20,
         enabled: true,
         icon: ':pizza:'
     }
