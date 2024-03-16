@@ -10,14 +10,14 @@ import { AdvancedConfiguration } from './ui/configuration/AdvancedConfiguration'
 const SharedSettings = () => {
     const context = getStandardContext(useProductContext(), 'user');
 
-    if (context.isLicensed === false) {
-        console.error('License not found', useProductContext());
-        return (
-            <Fragment>
-                <Text>Please confirm you have a valid license for Scavenger Hunt</Text>
-            </Fragment>
-        );
-    }
+    // if (context.isLicensed === false) {
+    //     console.error('License not found', useProductContext());
+    //     return (
+    //         <Fragment>
+    //             <Text>Please confirm you have a valid license for Scavenger Hunt</Text>
+    //         </Fragment>
+    //     );
+    // }
 
     const [currentConfig, setCurrentConfig] = useState(async () => getConfigurationSettings(context));
     
